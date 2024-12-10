@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 10, 2024 at 06:26 PM
+-- Generation Time: Dec 10, 2024 at 07:06 PM
 -- Server version: 10.4.33-MariaDB-log
 -- PHP Version: 8.1.10
 
@@ -41,7 +41,7 @@ CREATE TABLE `wy_admin` (
 --
 
 INSERT INTO `wy_admin` (`admin_id`, `admin_code`, `admin_name`, `admin_email`, `admin_password`, `admin_time`) VALUES
-(1, '001', 'Admin', 'admin@gmail.com', 'd033e22ae348aeb5660fc2140aec35850c4da997', '2019-04-18 02:22:37');
+(1, 'admin', 'Admin', 'admin@gmail.com', 'd033e22ae348aeb5660fc2140aec35850c4da997', '2019-04-18 02:22:37');
 
 -- --------------------------------------------------------
 
@@ -63,8 +63,9 @@ CREATE TABLE `wy_attendance` (
 --
 
 INSERT INTO `wy_attendance` (`attendance_id`, `emp_code`, `attendance_date`, `action_name`, `action_time`, `emp_desc`) VALUES
-(1, 'WY01', '2024-12-11', 'time-in', '02:23:36', 'checkin'),
-(2, 'WY01', '2024-12-11', 'overtime', '02:25:42', 'overtime');
+(1, 'WY01', '2024-12-11', 'time-in', '02:35:10', 'checkin'),
+(2, 'WY01', '2024-12-11', 'overtime', '02:36:04', 'overtime'),
+(3, 'WY01', '2024-12-11', 'time-out', '02:37:41', 'checkout');
 
 -- --------------------------------------------------------
 
@@ -110,11 +111,8 @@ CREATE TABLE `wy_employees` (
 --
 
 INSERT INTO `wy_employees` (`emp_id`, `emp_code`, `emp_password`, `first_name`, `last_name`, `dob`, `gender`, `merital_status`, `nationality`, `address`, `city`, `state`, `country`, `email`, `mobile`, `telephone`, `identity_doc`, `identity_no`, `emp_type`, `joining_date`, `blood_group`, `photo`, `designation`, `department`, `pan_no`, `bank_name`, `account_no`, `ifsc_code`, `pf_account`, `created`) VALUES
-(6, 'WY01', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Will', 'Williams', '04/01/1995', 'male', 'Single', 'American', '2424  Boggess Street', 'Dallas', 'TX', 'US', 'seancvpugosa@gmail.com', '2457878540', '014577854', 'Passport', '012345678', 'Permanent position', '01/29/2019', 'B+', 'WY01.jpg', 'Colletors', 'WEB', '14785424', 'Demo Bank', '012457854512', '12458', '11452', '2021-04-12 13:54:49'),
-(7, 'WY02', '12dea96fec20593566ab75692c9949596833adc9', 'Leo', 'Allen', '04/01/1993', 'male', 'Registered partnership', 'American', '4265  Jefferson Street', 'Norfolk', 'VA', 'US', 'leoallen06905@gmail.com', '2450157695', '1245785540', 'Passport', '914575421', 'Permanent position', '04/01/2020', 'AB+', 'WY02.jpg', 'Chief Marketing Officer', 'Marketing', '2014578540', 'Grand Summit Bank Inc.', '69529712540', 'GRSB0069961', 'GB LAD 054110 000 000542', '2021-04-14 13:18:32'),
-(8, 'WY03', '12dea96fec20593566ab75692c9949596833adc9', 'Christen', 'Moore', '04/20/1995', 'female', 'Single', 'American', '518  Evergreen Lane', 'Los Angeles', 'CA', 'US', 'moorechristen@gmail.com', '4578545555', '4547854520', 'Passport', '100035420', 'Part-time employee', '04/01/2021', 'A+', 'WY03.jpg', 'Executive Assistant', 'General', '1450578569', 'Crest Bank', '87529722555', 'CBSB0096960', 'CB LAD 094169 000 000111', '2021-04-14 14:23:30'),
-(9, 'WY04', '12dea96fec20593566ab75692c9949596833adc9', 'Stephen', 'Denn', '10/12/1992', 'male', 'Registered partnership', 'American', '3007  Carolina Avenue', 'Loveland', 'CO', 'US', 'stephen@gmail.com', '3457856970', '1045786310', 'Passport', '321457852', 'Intern', '04/14/2021', 'A-', 'WY04.jpg', 'Internship Period', 'IT', '2222060446', 'Federal Bank', '273794443158', 'FBSB00139980', 'FB LAD 033385 000 000135', '2021-04-14 15:49:34'),
-(10, 'WY05', '12dea96fec20593566ab75692c9949596833adc9', 'Agnes', 'Miller', '07/29/1993', 'female', 'Single', 'American', '4211 Rubaiyt Road', 'Grand Rapids', 'Michign', 'US', 'agnesm88d@gmail.com', '3247548880', '2457778540', 'Passport', '245785000', 'Permanent position', '10/15/2020', 'B+', 'WY05.jpg', 'Chief Technology Officer', 'IT', '425569690', 'Centreville Bank', '4201483626', 'CVCB0011377', 'CB LAD 032425 000 000753', '2021-04-14 19:22:17');
+(6, 'WY01', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Will', 'Williams', '04/01/1995', 'male', 'Single', 'American', '2424  Boggess Street', 'Dallas', 'TX', 'US', 'seancvpugosa@gmail.com', '2457878540', '014577854', 'Passport', '012345678', 'Permanent position', '01/29/2019', 'B+', 'WY01.jpg', 'Collectors', 'WEB', '14785424', 'Demo Bank', '012457854512', '12458', '11452', '2021-04-12 13:54:49'),
+(7, 'WY02', '12dea96fec20593566ab75692c9949596833adc9', 'Leo', 'Allen', '04/01/1993', 'male', 'Registered partnership', 'American', '4265  Jefferson Street', 'Norfolk', 'VA', 'US', 'leoallen06905@gmail.com', '2450157695', '1245785540', 'Passport', '914575421', 'Permanent position', '04/01/2020', 'AB+', 'WY02.jpg', 'Chief Marketing Officer', 'Marketing', '2014578540', 'Grand Summit Bank Inc.', '69529712540', 'GRSB0069961', 'GB LAD 054110 000 000542', '2021-04-14 13:18:32');
 
 -- --------------------------------------------------------
 
@@ -192,7 +190,8 @@ INSERT INTO `wy_payheads` (`payhead_id`, `payhead_name`, `payhead_desc`, `payhea
 (20, 'Salary Loan', 'Loan', 'deductions'),
 (21, 'Maxicare', 'Loan', 'deductions'),
 (22, 'SSS Premium', 'Loan', 'deductions'),
-(23, 'Salary', 'Salary of Employee', 'earnings');
+(23, 'Salary', 'Salary of Employee', 'earnings'),
+(24, 'Late Deduction', 'Deduction for Late', 'deductions');
 
 -- --------------------------------------------------------
 
@@ -212,8 +211,8 @@ CREATE TABLE `wy_pay_structure` (
 --
 
 INSERT INTO `wy_pay_structure` (`salary_id`, `emp_code`, `payhead_id`, `default_salary`) VALUES
-(3, 'WY02', 7, 5.00),
-(6, 'WY01', 1, 19350.00);
+(6, 'WY01', 24, 50.00),
+(7, 'WY01', 23, 650.00);
 
 -- --------------------------------------------------------
 
@@ -239,8 +238,8 @@ CREATE TABLE `wy_salaries` (
 --
 
 INSERT INTO `wy_salaries` (`salary_id`, `emp_code`, `payhead_name`, `pay_amount`, `earning_total`, `deduction_total`, `net_salary`, `pay_type`, `pay_month`, `generate_date`) VALUES
-(1, 'WY01', 'Basic Salary', 5000.00, 5000.00, 5000.00, 0.00, 'earnings', 'December, 2024', '2024-12-11 00:23:29'),
-(2, 'WY01', 'Conveyance Allowance', 5000.00, 5000.00, 5000.00, 0.00, 'deductions', 'December, 2024', '2024-12-11 00:23:29');
+(1, 'WY01', 'Salary', 650.00, 650.00, 50.00, 600.00, 'earnings', 'December, 2024', '2024-12-11 03:01:48'),
+(2, 'WY01', 'Late Deduction', 50.00, 650.00, 50.00, 600.00, 'deductions', 'December, 2024', '2024-12-11 03:01:48');
 
 --
 -- Indexes for dumped tables
@@ -315,7 +314,7 @@ ALTER TABLE `wy_admin`
 -- AUTO_INCREMENT for table `wy_attendance`
 --
 ALTER TABLE `wy_attendance`
-  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `wy_employees`
@@ -339,13 +338,13 @@ ALTER TABLE `wy_leaves`
 -- AUTO_INCREMENT for table `wy_payheads`
 --
 ALTER TABLE `wy_payheads`
-  MODIFY `payhead_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `payhead_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `wy_pay_structure`
 --
 ALTER TABLE `wy_pay_structure`
-  MODIFY `salary_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `salary_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `wy_salaries`

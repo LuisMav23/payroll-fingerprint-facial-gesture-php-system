@@ -953,11 +953,11 @@ function GeneratePaySlip()
                 .noseal{text-align:center;font-size:11px;}
             </style>';
 			$html .= '<div class="div_half">';
-			$html .= '<img class="logo" src="' . BASE_URL . 'dist/img/logo.png" alt="Wisely Online Services Private Limited" />';
+			$html .= '<img class="logo" src="' . BASE_URL . 'dist/img/logo.png" alt="Smith Brother\'s Corporation Limited" />';
 			$html .= '</div>';
 			$html .= '<div class="div_half">';
-			$html .= '<h2 class="com_title">Wisely Online Services Private Limited</h2>';
-			$html .= '<p class="reg_no">Registration Number: 063838, Bangalore</p>';
+			$html .= '<h2 class="com_title">Smith Brother\'s Corporation Limited</h2>';
+			$html .= '<p class="reg_no"></p>';
 			$html .= '</div>';
 
 			$html .= '<p class="subject">Salary Slip for ' . $pay_month . '</p>';
@@ -1056,7 +1056,7 @@ function GeneratePaySlip()
 			$html .= '<strong>Signature</strong>';
 			$html .= '</div>';
 			$html .= '<div class="com_info">';
-			$html .= 'Address: No. 17/1, 1st Floor, 2nd Cross, 3rd Main, R.T. Nagar, Bangalore-560032';
+			$html .= 'Address: 5 Cambridge, Cubao, Quezon City, 1109 Metro Manila';
 			$html .= '</div>';
 			$html .= '<div class="noseal">This is a system generated document and does not require a seal.</div>';
 
@@ -1082,6 +1082,7 @@ function GeneratePaySlip()
 		$result['message'] = 'Invalid employee code or pay month.';
 	}
 
+	var_dump($result);
 	return json_encode($result);
 }
 
@@ -1101,7 +1102,7 @@ function SendPaySlipByMail()
 			$message = '<p>Hi ' . $empData['first_name'] . '</p>';
 			$message .= '<p>Here is your attached Salary Slip for the period of ' . $month . '.</p>';
 			$message .= '<hr/>';
-			$message .= '<p>Thank You,<br/>Wisely Online Services Private Limited</p>';
+			$message .= '<p>Thank You,<br/>Smith Brother\'s Corporation Limited</p>';
 
 			$attachmentPath = dirname(dirname(__FILE__)) . '/payslips/' . $emp_code . '/' . str_replace(', ', '-', $month) . '/' . str_replace(', ', '-', $month) . '.pdf';
 			$attachment[0]['src'] = $attachmentPath;
@@ -1501,7 +1502,7 @@ function ApproveLeaveApplication()
 					$message .= '<p>Leave Type: ' . $leaveData['leave_type'] . '</p>';
 					$message .= '<p>Status: ' . ucwords($leaveData['leave_status']) . '</p>';
 					$message .= '<hr/>';
-					$message .= '<p>Thank You,<br/>Wisely Online Services Private Limited</p>';
+					$message .= '<p>Thank You,<br/>Smith Brother\'s Corporation Limited</p>';
 					$send = Send_Mail($subject, $message, $empName, $empEmail);
 					if ($send == 0) {
 						$result['code'] = 0;
@@ -1556,7 +1557,7 @@ function RejectLeaveApplication()
 					$message .= '<p>Leave Type: ' . $leaveData['leave_type'] . '</p>';
 					$message .= '<p>Status: ' . ucwords($leaveData['leave_status']) . '</p>';
 					$message .= '<hr/>';
-					$message .= '<p>Thank You,<br/>Wisely Online Services Private Limited</p>';
+					$message .= '<p>Thank You,<br/>Smith Brother\'s Corporation Limited</p>';
 					$send = Send_Mail($subject, $message, $empName, $empEmail);
 					if ($send == 0) {
 						$result['code'] = 0;

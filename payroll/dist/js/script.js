@@ -1030,6 +1030,7 @@ $(document).ready(function () {
         url: baseurl + 'ajax/?case=GeneratePaySlip',
         data: form.serialize(),
         success: function (result) {
+          console.log(result)
           if (result.code == 0) {
             window.location.reload()
           } else {

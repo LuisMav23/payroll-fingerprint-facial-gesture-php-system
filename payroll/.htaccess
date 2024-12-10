@@ -1,7 +1,8 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine On
 
-RewriteBase /payroll/
+# Update the base path to match your directory
+RewriteBase /payroll-fingerprint-facial-gesture-php-system/payroll/
 
 # Remove .php extension with and without trailing slash
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -12,10 +13,14 @@ RewriteRule ^(.*?)/?$ $1.php [L,QSA]
 RewriteCond %{QUERY_STRING} (.*)/$
 RewriteRule ^(.*)$ /$1?%1 [L,R=301]
 
+# Route for pay-salary
 RewriteRule ^pay-salary/(.*)/(.*)/(.*)/ manage-salary.php?emp_code=$1&month=$2&year=$3
 RewriteRule ^pay-salary/(.*)/(.*)/(.*) manage-salary.php?emp_code=$1&month=$2&year=$3
 
-IndexIgnore *	
+# Ignore index files
+IndexIgnore *
+
+# Redirect all invalid requests to 404.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ 404.php [L]

@@ -1,7 +1,7 @@
 <?php
 
-define('BASE_URL', 'http://localhost/payroll/');
-define('REG_URL', 'http://localhost/payroll/registration/');
+define('BASE_URL', 'http://localhost/payroll-fingerprint-facial-gesture-php-system/payroll/');
+define('REG_URL', 'http://localhost/payroll-fingerprint-facial-gesture-php-system/payroll/registration/');
 define('COMPANY_NAME', 'Payroll Management System');
 
 // MySQL Database Details
