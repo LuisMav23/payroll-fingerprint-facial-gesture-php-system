@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HavenRent</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <style>
+      .modal {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* White overlay with transparency */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* Ensure it's above other content */
+        font-size: 1.5em; /* Larger font size for better visibility */
+        color: #333; /* Darker text color for contrast */
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-2.1.1.min.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="static/face-api.js"></script>
+    <script src="static/js/commons.js"></script>
+    <script src="static/js/faceDetectionControls.js"></script>
+  </head>
+  <body>
+    {% if success %}
+    <script>
+      alert("Training Successful");
+      history.back();
+    </script>
+    {% endif %}
+
+    <div class="container mt-5">
+      <div class="row">
+        <!-- First Card -->
+        <div class="col-md-6">
+          <div class="card">
+            <video
+              id="webcam"
+              class="card-img-top"
+              autoplay
+              muted
+              playsinline
+              onloadedmetadata="onPlay(this)"
+              style="width: 100%; height: auto; position: relative"
+            ></video>
+            <canvas
+              id="overlay"
+              style="position: absolute; top: 0; left: 0"
+            ></canvas>
+            <div class="card-body">
+              <h5 id="name" class="card-title">Student Name:</h5>
+
+              <p id="faceConfidence" class="font-weight-bold"></p>
+            </div>
+          </div>
+        </div>
+        <!-- Second Card -->
+        <div class="col-md-6">
+          <button
+            type="button"
+            class="btn col btn-primary"
+            data-toggle="modal"
+            data-target="#uploadModal"
+          >
+            Create Face Data
+          </button>
+          <br />
+          <br />
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Student Information</h5>
+              <ul class="list-group list-group-flush">
+                {% for student_id, name in students %}
+                <li class="list-group-item">
+                  Student ID: {{ student_id }}, Name: {{ name }}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Capture Again Button -->
+      <div id="loader" style="display: none">Loading...</div>
+      <div class="text-center mt-3">
+        <button
+          class="btn btn-success"
+          id="captureAgainBtn"
+          onclick="restartFaceDetection()"
+        >
+          Capture Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="uploadModal"
+      tabindex="-1"
+      aria-labelledby="uploadModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadModalLabel">Train Student</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form
+              id="trainForm"
+              method="POST"
+              enctype="multipart/form-data"
+              action="/train"
+            >
+              <div class="form-group">
+                <label for="studentSelect">Student</label>
+                <select
+                  class="form-control"
+                  id="studentSelect"
+                  name="student_id"
+                  required
+                >
+                  <option value="" disabled selected>Select a student</option>
+                  {% for student_id, name in students %}
+                  <option value="{{ student_id }}">
+                    {{ name }} (ID: {{ student_id }})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="studentImages">Upload Images</label>
+                <input
+                  type="file"
+                  class="form-control-file"
+                  id="studentImages"
+                  name="images"
+                  accept="image/*"
+                  multiple
+                  required
+                />
+                <small class="form-text text-muted"
+                  >Upload 5 images of student</small
+                >
+              </div>
+              <button type="submit" class="col col-12 btn btn-primary">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Hidden script tag to hold JSON data -->
+    <script id="students-data" type="application/json">
+      {{ students | tojson }}
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        $("#studentSelect").select2({
+          width: "100%",
+          placeholder: "Select a student",
+        });
+      });
+
+      let detectionToggle = false; // Initialize detectionToggle
+      let faceDetectionRunning = false; // Track face detection state
+
+      function startFaceDetection() {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(function (stream) {
+            const video = document.getElementById("webcam");
+            video.srcObject = stream;
+            faceDetectionRunning = true; // Set face detection running state
+            detectionToggle = true; // Enable detection
+            run(); // Start face detection
+          })
+          .catch(function (error) {
+            console.error("Error accessing webcam: ", error);
+          });
+      }
+
+      function stopFaceDetection() {
+        faceDetectionRunning = false; // Stop face detection
+        detectionToggle = false; // Disable detection
+      }
+
+      function restartFaceDetection() {
+        $("#captureAgainBtn").hide(); // Hide capture again button
+        startFaceDetection(); // Restart face detection
+      }
+
+      // Capture the current frame from the video element
+      function captureImageFromVideo(videoEl) {
+        const canvas = document.createElement("canvas");
+        canvas.width = videoEl.videoWidth;
+        canvas.height = videoEl.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL("image/jpeg"); // Return image data URL
+      }
+
+      function getStudentsMap() {
+        const studentsDataElement = document.getElementById("students-data");
+        const studentsData = studentsDataElement.textContent;
+        const studentsArray = JSON.parse(studentsData);
+
+        // Convert the array to a dictionary for easy lookup
+        return Object.fromEntries(
+          studentsArray.map(([id, name]) => [String(id), name.trim()])
+        );
+      }
+
+      const studentsMap = getStudentsMap();
+
+      function showAttendanceToast(studentId, message) {
+        const studentIdStr = String(studentId);
+        const studentName = studentsMap[studentIdStr] || "Unknown Student";
+
+        document.getElementById(
+          "name"
+        ).textContent = `Student Name: ${studentName}`;
+
+        M.toast({
+          html: `${message} for: ${studentName}`,
+          classes: "rounded",
+        });
+      }
+      let lastCall = 0;
+      const throttleTime = 2000; // 2 seconds in milliseconds
+
+      function sendCapturedImage(imageData) {
+        const now = Date.now();
+        if (now - lastCall < throttleTime) {
+          // If the function was called too recently, do nothing
+          return;
+        }
+        lastCall = now;
+
+        $("#loader").show();
+
+        $.ajax({
+          url: "/capture",
+          type: "POST",
+          data: { image: imageData },
+          success: function (response) {
+            $("#loader").hide();
+            $("#captureAgainBtn").show();
+
+            if (
+              response.status === "success" &&
+              response.predictions &&
+              response.predictions.length > 0
+            ) {
+              const studentId = response.predictions[0][0];
+              showAttendanceToast(studentId, response.message);
+            } else {
+              M.toast({
+                html: response.message || "Face is not a registered student",
+                classes: "rounded",
+              });
+            }
+          },
+          error: function (error) {
+            console.error("Error sending image to backend: ", error);
+            $("#loader").hide();
+            M.toast({
+              html: "An error occurred while processing the image",
+              classes: "rounded",
+            });
+          },
+        });
+      }
+
+      // Face detection functions
+      let forwardTimes = [];
+
+      function updateTimeStats(timeInMs) {
+        forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
+        const avgTimeInMs =
+          forwardTimes.reduce((total, t) => total + t) / forwardTimes.length;
+        $("#time").val(`${Math.round(avgTimeInMs)} ms`);
+        $("#fps").val(`${faceapi.utils.round(1000 / avgTimeInMs)}`);
+      }
+
+      async function onPlay() {
+        const videoEl = document.getElementById("webcam");
+
+        if (
+          videoEl.paused ||
+          videoEl.ended ||
+          !faceDetectionRunning ||
+          !isFaceDetectionModelLoaded() ||
+          !detectionToggle
+        )
+          return setTimeout(() => onPlay(), 100);
+
+        const options = getFaceDetectorOptions();
+        const ts = Date.now();
+        const result = await faceapi.detectSingleFace(videoEl, options);
+
+        updateTimeStats(Date.now() - ts);
+
+        if (result) {
+          const confidence = result.score.toFixed(2);
+          console.log(`Face detection confidence: ${confidence}`);
+
+          // Display confidence in the UI
+          $("#faceConfidence").text(`Face detection confidence: ${confidence}`);
+
+          if (confidence >= 0.7) {
+            // Stop face detection and show capture again button
+            stopFaceDetection();
+            $("#captureAgainBtn").show();
+
+            // Capture the image and send to backend
+            const capturedImage = captureImageFromVideo(videoEl);
+            sendCapturedImage(capturedImage);
+          }
+        } else {
+          $("#faceConfidence").text(`Face detection confidence: 0`);
+          $("#captureAgainBtn").hide(); // Hide button if no face detected
+        }
+
+        setTimeout(() => onPlay(), 100);
+      }
+
+      async function run() {
+        await faceapi.nets.tinyFaceDetector.loadFromUri("static/models");
+        await faceapi.nets.ssdMobilenetv1.loadFromUri("static/models");
+        await changeFaceDetector("tiny_face_detector");
+        changeInputSize(128);
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+        const videoEl = document.getElementById("webcam");
+        videoEl.srcObject = stream;
+        onPlay();
+      }
+    </script>
+  </body>
+</html>

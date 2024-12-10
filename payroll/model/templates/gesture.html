@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+    <!-- Include p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Include TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+    <!-- Include ml5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
+
+    <script>
+      let video;
+      let handPose;
+      let hands = [];
+
+      let lastRequestTime = 0; // To store the timestamp of the last request
+      let lastGesture = ""; // To store the last gesture sent
+      let gestureCooldown = false; // To prevent multiple requests for the same gesture
+
+      function setup() {
+        createCanvas(640, 480);
+        video = createCapture(VIDEO);
+        video.size(width, height);
+        video.hide();
+
+        // Initialize handPose and start detecting hands
+        handPose = ml5.handPose(video, modelReady);
+      }
+
+      function modelReady() {
+        console.log("Model Loaded!");
+        detectHands();
+      }
+
+      function detectHands() {
+        handPose.detect(video, gotHands);
+      }
+
+      function gotHands(results) {
+        hands = results;
+        detectHands();
+      }
+
+      function sendGestureToFlask(gesture) {
+        const currentTime = new Date().getTime(); // Get current timestamp
+        const email = new URLSearchParams(window.location.search).get("email");
+
+        // Check if the cooldown is active
+        if (gestureCooldown) {
+          console.log("Cooldown active. Gesture request blocked.");
+          return; // Exit if cooldown is active
+        }
+
+        // Check if 3 seconds have passed since the last request
+        if (currentTime - lastRequestTime < 13000) {
+          console.log("Request blocked due to spam prevention.");
+          return; // Exit the function if less than 3 seconds have passed
+        }
+
+        // Check if the gesture is different from the last gesture sent
+        if (gesture === lastGesture) {
+          console.log("Gesture has not changed, not sending request.");
+          return; // Exit if the gesture hasn't changed
+        }
+
+        // Set cooldown and update last request values
+        gestureCooldown = true; // Activate cooldown
+        lastRequestTime = currentTime;
+        lastGesture = gesture;
+
+        console.log("Sending gesture:", gesture);
+
+        fetch("/gesture-check", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            gesture: gesture,
+            empcode: email, // Use 'empcode' as the key
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              alert(data.message); // Show success message
+            } else if (data.error) {
+              alert("Error: " + data.error); // Show error message
+            }
+          })
+          .catch((error) => {
+            alert("Error sending gesture: " + error); // Show error on network failure
+          })
+          .finally(() => {
+            // Reset cooldown after a delay
+            setTimeout(() => {
+              gestureCooldown = false;
+            }, 3000); // Adjust the delay as needed
+          });
+      }
+
+      function draw() {
+        image(video, 0, 0);
+
+        if (hands.length > 0) {
+          let hand = hands[0];
+          let index = hand.index_finger_tip;
+          let middle = hand.middle_finger_tip;
+          let thumb = hand.thumb_tip;
+
+          for (let i = 0; i < hand.keypoints.length; i++) {
+            let keypoint = hand.keypoints[i];
+            if (hand.handedness == "Left") {
+              fill(255, 0, 255); // Purple for left hand
+            } else {
+              fill(255, 255, 0); // Yellow for right hand
+            }
+            noStroke();
+            circle(keypoint.x, keypoint.y, 16); // Draw circle at each keypoint
+          }
+
+          textSize(128);
+          textAlign(CENTER, CENTER);
+
+          // Check for gestures and send only if the cooldown is inactive
+          if (!gestureCooldown) {
+            if (thumb.y < index.y && lastGesture !== "checkin") {
+              text("👍", index.x, index.y);
+              sendGestureToFlask("checkin"); // Send thumbs up gesture
+            } else if (
+              index.y < middle.y &&
+              index.y < thumb.y &&
+              middle.y < thumb.y &&
+              lastGesture !== "overtime"
+            ) {
+              text("✌️", middle.x, middle.y); // Peace sign
+              sendGestureToFlask("overtime"); // Send overtime gesture
+            } else if (thumb.y > index.y && lastGesture !== "checkout") {
+              text("👎", index.x, index.y);
+              sendGestureToFlask("checkout"); // Send thumbs down gesture
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

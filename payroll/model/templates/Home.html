@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System</title>
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Include Orbitron font from Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap">
+    <style>
+        /* Global Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            background: linear-gradient(to bottom right, #0d0d28, #16213e);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 30px; /* space between logo and text */
+        }
+
+        /* Logo Style */
+        .hero-section img {
+            width: 330px;
+            height: auto;
+            padding-left: 15px;
+            animation: rotate 5s infinite linear;
+            transition: transform 0.5s ease-in-out;
+        }
+
+            @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Hero Section Text */
+        .hero-section h1 {
+            font-size: 3em;
+            color: yellow;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+            animation: animate 3s linear infinite;
+        }
+
+        @keyframes animate{
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .hero-section p {
+            font-size: 1.2em;
+            color: #ffffff; /* Set text color to white */
+            line-height: 1.5;
+        }
+
+        /* Button Style */
+        .enter-button {
+            background-color: #ffcc00;
+            padding: 15px 30px;
+            border: none;
+            font-size: 1.2em;
+            color: #121212;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .enter-button:hover {
+            background-color: #f39c12;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <div class="hero-section">
+            <img src="{{ url_for('static', filename='Spearlogo.png') }}" alt="spearlogo">
+        </div>
+        <div class="hero-section">
+            <h1>SMART PAYROLL ENHANCED WITH AI RECOGNITION</h1>
+            <p>Register employee, manage attendance, and integrate AI for seamless recognition.</p>
+        </div>
+    </div>
+
+    <!-- Button to enter face recognition -->
+    <button class="enter-button" onclick="window.location.href='/start_recognition'">Enter</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
