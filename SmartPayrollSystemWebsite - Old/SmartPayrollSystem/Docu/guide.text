@@ -1,0 +1,60 @@
+GUIDE
+
+TECHNOLOGY USED:
+
+1. JavaScript (Front-end and Back-end)
+2. HTML (Front-end)
+3. CSS (Front-end)
+4. Node.js (Back-end)
+5. MySQL (Database)
+6. PHP (Database connection and access)
+7. TensorFlow.js (Facial Recognition)
+8. MediaPipe Hands (Hand Gesture Recognition)
+
+
+JavaScript:
+
+Used for both front-end (client-side interaction) and back-end (server-side logic with Node.js) development, providing a unified language across the stack.
+HTML:
+
+Structures the content and layout of web pages, providing the skeleton for the user interface.
+CSS:
+
+Styles the website’s front-end, making it visually appealing and responsive for users.
+Node.js:
+
+Handles server-side functionality, such as processing requests, managing routes, and interfacing with the database.
+MySQL:
+
+A relational database to store and manage payroll data like employee information, payroll records, and attendance logs.
+TensorFlow.js:
+
+Facilitates facial recognition by running machine learning models in the browser to detect and recognize faces in real time.
+MediaPipe Hands:
+
+Detects and tracks hand gestures in the browser, enabling gesture-based controls for features like login or system navigation.
+=========================
+SETUP
+
+1. Install Required Tools
+Make sure to install the following:
+
+ - Node.js: As this will serve your back-end and run the server. LINK: https://nodejs.org/en/download/package-manager
+ - MySQL: For your database management.(Xampp)					 LINK: https://www.apachefriends.org/download.php
+ - Visual Studio 2022: With Node.js support enabled.		     link: https://visualstudio.microsoft.com/downloads/
+ 
+ 
+ =======================MYSQL (xampp)
+1. open xampp
+2. Start Apache, Mysql,
+3. click Admin in Mysql
+4. click "New" to create your database name = smartpayrollsystem
+5. Run the SQL script in sequence 
+
+ ======================= To run your local Website through Xampp
+1. Put the folder of youe Website in where you installed your xampp (default:  C:\xampp\htdocs)
+2. then open a browser
+3. use this link to access your Website 
+	- http://localhost/SmartPayrollSystemWebsite/SmartPayrollSystem/ 
+	- http://localhost/SmartPayrollSystemWebsite/SmartTimeInSystem/SmartTimeInSystem/public/
+ 

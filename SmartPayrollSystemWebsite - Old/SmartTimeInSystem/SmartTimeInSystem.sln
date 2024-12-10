@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35208.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "SmartTimeInSystem", "SmartTimeInSystem\SmartTimeInSystem.njsproj", "{851257E0-C41E-48EB-BE8E-E1C78956E4AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{851257E0-C41E-48EB-BE8E-E1C78956E4AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851257E0-C41E-48EB-BE8E-E1C78956E4AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851257E0-C41E-48EB-BE8E-E1C78956E4AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851257E0-C41E-48EB-BE8E-E1C78956E4AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C5F27B4-3CA5-4722-A25D-29E7933453A2}
+	EndGlobalSection
+EndGlobal

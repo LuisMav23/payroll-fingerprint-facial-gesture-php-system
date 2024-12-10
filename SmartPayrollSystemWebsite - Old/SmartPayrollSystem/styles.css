@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.employee-portal {
+    max-width: 800px; /* Set a max-width for the content */
+    margin: 0 auto; /* Center align the portal */
+    padding: 20px;
+    background-color: #ffffff; /* White background for the main container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; /* Aligns header elements */
+    align-items: center; /* Center align vertically */
+    margin-bottom: 20px;
+}
+
+.user-info {
+    font-weight: bold;
+    color: #333; /* Dark text color */
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Align vertically */
+    margin-bottom: 20px;
+}
+
+    .filter-bar button,
+    .filter-bar input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px; /* Rounded corners */
+    }
+
+    .filter-bar button {
+        background-color: #007bff; /* Blue button */
+        color: #fff;
+        border: none; /* Remove border */
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .filter-bar button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+.status-filter label {
+    margin-left: 10px; /* Space between checkboxes */
+}
+
+.employee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 20px; /* Space between cards */
+}
+
+.employee-card {
+    background-color: #ffffff; /* Card background */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Card shadow */
+    text-align: center; /* Center text */
+    transition: transform 0.3s; /* Animate scaling on hover */
+}
+
+    .employee-card:hover {
+        transform: scale(1.02); /* Slightly enlarge on hover */
+    }
+
+.employee-img {
+    width: 80px; /* Fixed size for images */
+    height: 80px;
+    border-radius: 50%; /* Circular images */
+    margin-bottom: 10px; /* Space between image and text */
+}
+
+.employee-info p {
+    font-weight: bold; /* Bold names */
+    margin: 10px 0; /* Space above and below name */
+}
+
+.view-profile-btn {
+    background-color: #007bff; /* Blue button */
+    color: #fff;
+    padding: 8px 15px; /* Padding around button text */
+    border-radius: 4px; /* Rounded corners */
+    text-decoration: none; /* No underline */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+    .view-profile-btn:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }

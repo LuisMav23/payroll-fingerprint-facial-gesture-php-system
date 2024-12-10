@@ -1,0 +1,9 @@
+C:\Users\micko\source\repos\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.AssemblyReference.cache
+C:\Users\micko\source\repos\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.CoreCompileInputs.cache
+C:\Users\micko\source\repos\SmartTimeInSystem\SmartTimeInSystem\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\micko\OneDrive\Documents\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.AssemblyReference.cache
+C:\Users\micko\OneDrive\Documents\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.CoreCompileInputs.cache
+C:\Users\micko\OneDrive\Documents\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\micko\OneDrive\Documents\GitProjects\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.AssemblyReference.cache
+C:\Users\micko\OneDrive\Documents\GitProjects\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\obj\Debug\SmartTimeInSystem.njsproj.CoreCompileInputs.cache
+C:\Users\micko\OneDrive\Documents\GitProjects\SmartPayrollSystemWebsite\SmartTimeInSystem\SmartTimeInSystem\bin\Microsoft.NodejsTools.WebRole.dll

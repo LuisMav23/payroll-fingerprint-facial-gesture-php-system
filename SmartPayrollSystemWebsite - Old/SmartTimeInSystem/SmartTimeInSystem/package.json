@@ -1,0 +1,14 @@
+{
+  "name": "smart-time-in-system",
+  "version": "0.0.0",
+  "description": "SmartTimeInSystem",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "eslint": "^8.21.0"
+  },
+  "eslintConfig": {
+  }
+}
