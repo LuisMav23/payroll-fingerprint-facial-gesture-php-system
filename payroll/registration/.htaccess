@@ -1,7 +1,7 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine On
 
-RewriteBase /payroll/registration/
+RewriteBase /payroll-fingerprint-facial-gesture-php-system/payroll/registration/
 
 # Remove .php extension with and without trailing slash
 RewriteCond %{REQUEST_FILENAME} !-f

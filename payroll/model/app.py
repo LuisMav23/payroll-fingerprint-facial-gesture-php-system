@@ -43,7 +43,26 @@ def home():
 
 @app.route("/gesture")
 def gesture():
-    return render_template("gesture.html")
+    # Get email from query parameter
+    email = request.args.get("email")
+
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor(dictionary=True)  # For better column name access
+        query = "SELECT * FROM wy_employees WHERE emp_code = %s"
+        cursor.execute(query, (email,))  # Execute query with parameterized input
+        employee = cursor.fetchone()  # Fetch the first result
+
+        cursor.close()
+        conn.close()
+
+        if employee:
+            return render_template("gesture.html", employee=employee)
+        else:
+            return "Employee not found", 404
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}", 500
 
 
 @app.route("/start_recognition")
@@ -138,7 +157,7 @@ def check_gesture():
             timeout_exists = cursor.fetchone()
 
             if timeout_exists:
-                return jsonify({"error": "You already timed out today"}), 400
+                return jsonify({"error": "You cannot clock in again"}), 400
 
             insert_query = """
                 INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)

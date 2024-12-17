@@ -82,11 +82,11 @@ if ($attendanceSQL) {
 						<i class="fa fa-gratipay"></i> Pay Heads
 					</a>
 				</li>
-				<li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
+				<!-- <li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
 					<a href="<?php echo BASE_URL; ?>holidays/">
 						<i class="fa fa-calendar-check-o"></i> <span>List Holidays</span>
 					</a>
-				</li>
+				</li> -->
 			<?php } else { ?>
 				<li class="<?php echo $page_name == "salaries" ? 'active' : ''; ?>">
 					<a href="<?php echo BASE_URL; ?>salaries/">
@@ -98,11 +98,11 @@ if ($attendanceSQL) {
 						<i class="fa fa-sign-out"></i> <span>Leaves</span>
 					</a>
 				</li>
-				<li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
+				<!-- <li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
 					<a href="<?php echo BASE_URL; ?>holidays/">
 						<i class="fa fa-calendar-check-o"></i> <span>Holidays</span>
 					</a>
-				</li>
+				</li> -->
 			<?php } ?>
 		</ul>
 	</section>

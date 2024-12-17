@@ -54,6 +54,9 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 							<div class="box-header">
 								<h3 class="box-title">All Employee List</h3>
 								<div class="box-tools">
+									<a href="../registration/" target="_blank" class="btn ">
+										<i class="fa fa-user"></i> Add Employee
+									</a>
 									<button class="btn btn-success " id="download-employee">
 										<i class="fa fa-download"></i> Download Employee List
 									</button>

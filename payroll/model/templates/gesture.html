@@ -11,14 +11,75 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: #f0f0f0;
+        background-color: white;
       }
       canvas {
         display: block;
+        border-radius: 10px;
+        margin-left: 50%;
+      }
+
+      .btn-primary,
+      .btn-success {
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 8px;
+      }
+
+      .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
     </style>
   </head>
   <body>
+    <div class="container mt-5">
+      <!-- Header with Real-Time Date and Time -->
+      <div class="text-center mb-4">
+        <h2>Employee Gesture Recognition</h2>
+        <p id="dateTime" class="text-muted"></p>
+
+        <h3>Employee Details</h3>
+
+        {% if employee %}
+        <p><strong>Employee ID:</strong> {{ employee.emp_code }}</p>
+        <p>
+          <strong>Full Name:</strong> {{ employee.first_name }} {{
+          employee.last_name }}
+        </p>
+        <p><strong>Date of Birth:</strong> {{ employee.dob }}</p>
+        <p><strong>Gender:</strong> {{ employee.gender }}</p>
+        <p><strong>Nationality:</strong> {{ employee.nationality }}</p>
+        <p>
+          <strong>Address:</strong> {{ employee.address }}, {{ employee.city }},
+          {{ employee.state }}, {{ employee.country }}
+        </p>
+        <p><strong>Email:</strong> {{ employee.email }}</p>
+        <p><strong>Mobile:</strong> {{ employee.mobile }}</p>
+        <p><strong>Designation:</strong> {{ employee.designation }}</p>
+        <p><strong>Department:</strong> {{ employee.department }}</p>
+        <p><strong>Joining Date:</strong> {{ employee.joining_date }}</p>
+        <p><strong>Blood Group:</strong> {{ employee.blood_group }}</p>
+        <p>
+          <strong>Bank Account:</strong> {{ employee.account_no }} ({{
+          employee.bank_name }})
+        </p>
+        <p><strong>PAN No:</strong> {{ employee.pan_no }}</p>
+        <p><strong>PF Account:</strong> {{ employee.pf_account }}</p>
+        <p><strong>Identity Document:</strong> {{ employee.identity_doc }}</p>
+        <p><strong>Identity No:</strong> {{ employee.identity_no }}</p>
+        <p>
+          <strong>Photo:</strong>
+          <img
+            src="http://localhost/payroll-fingerprint-facial-gesture-php-system/payroll/registration/photos/{{  employee.photo}}"
+            alt="Employee Photo"
+            width="100"
+          />
+        </p>
+        {% else %}
+        <p>Employee not found.</p>
+        {% endif %}
+      </div>
+    </div>
     <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
 
     <!-- Include p5.js -->
@@ -28,6 +89,37 @@
     <!-- Include ml5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
 
+    <script>
+      // Real-time Date and Time
+      function updateDateTime() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const formattedTime = now.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        document.getElementById(
+          "dateTime"
+        ).textContent = `${formattedDate}, ${formattedTime}`;
+      }
+      setInterval(updateDateTime, 1000);
+
+      // Show loader
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+      }
+
+      // Hide loader
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+    </script>
     <script>
       let video;
       let handPose;
@@ -103,7 +195,7 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.message) {
-              alert(data.message); // Show success message
+              alert(data.message);
             } else if (data.error) {
               alert("Error: " + data.error); // Show error message
             }

@@ -1428,41 +1428,46 @@ function ApplyLeaveToAdminApproval()
 		}
 		if (empty($AppliedDates)) {
 			$leaveSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "leaves` (`emp_code`, `leave_subject`, `leave_dates`, `leave_message`, `leave_type`, `apply_date`) VALUES('" . $empData['emp_code'] . "', '$leave_subject', '$leave_dates', '$leave_message', '$leave_type', '" . date('Y-m-d H:i:s') . "')");
-			if ($leaveSQL) {
-				$empName = $empData['first_name'] . ' ' . $empData['last_name'];
-				$empEmail = $empData['email'];
-				$adminEmail = $adminData['admin_email'];
-				$subject = 'Leave Application: ' . $leave_subject;
-				$message = '<p>Employee: ' . $empName . ' (' . $empData['emp_code'] . ')' . '</p>';
-				$message .= '<p>Leave Message: ' . $leave_message . '</p>';
-				$message .= '<p>Leave Date(s): ' . $leave_dates . '</p>';
-				$message .= '<p>Leave Type: ' . $leave_type . '</p>';
-				$message .= '<hr/>';
-				$message .= '<p>Please click on the buttons below or log into the admin area to get an action:</p>';
-				$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=ApproveLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
-				$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
-				$message .= '<button type="submit" style="background:green; border:1px solid green; color:white; padding:0 5px 3px; cursor:pointer; margin-right:15px;">Approve</button>';
-				$message .= '</form>';
-				$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=RejectLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
-				$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
-				$message .= '<button type="submit" style="background:red; border:1px solid red; color:white; padding:0 5px 3px; cursor:pointer;">Reject</button>';
-				$message .= '</form>';
-				$message .= '<p style="font-size:85%;">After clicking the button, please click on OK and then Continue to make your action complete.</p>';
-				$message .= '<hr/>';
-				$message .= '<p>Thank You<br/>' . $empName . '</p>';
-				$adminName = $adminData['admin_name'];
-				$send = Send_Mail($subject, $message, $adminName, $adminEmail, $empName, $empEmail);
-				if ($send == 0) {
-					$result['code'] = 0;
-					$result['result'] = 'Leave Application has been successfully send to your employer through mail.';
-				} else {
-					$result['code'] = 1;
-					$result['result'] = 'Notice: Leave Application not send through E-Mail, please try again.';
-				}
-			} else {
-				$result['code'] = 1;
-				$result['result'] = 'Something went wrong, please try again.';
-			}
+			// if ($leaveSQL) {
+			// 	$empName = $empData['first_name'] . ' ' . $empData['last_name'];
+			// 	$empEmail = $empData['email'];
+			// 	$adminEmail = $adminData['admin_email'];
+			// 	$subject = 'Leave Application: ' . $leave_subject;
+			// 	$message = '<p>Employee: ' . $empName . ' (' . $empData['emp_code'] . ')' . '</p>';
+			// 	$message .= '<p>Leave Message: ' . $leave_message . '</p>';
+			// 	$message .= '<p>Leave Date(s): ' . $leave_dates . '</p>';
+			// 	$message .= '<p>Leave Type: ' . $leave_type . '</p>';
+			// 	$message .= '<hr/>';
+			// 	$message .= '<p>Please click on the buttons below or log into the admin area to get an action:</p>';
+			// 	$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=ApproveLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
+			// 	$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
+			// 	$message .= '<button type="submit" style="background:green; border:1px solid green; color:white; padding:0 5px 3px; cursor:pointer; margin-right:15px;">Approve</button>';
+			// 	$message .= '</form>';
+			// 	$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=RejectLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
+			// 	$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
+			// 	$message .= '<button type="submit" style="background:red; border:1px solid red; color:white; padding:0 5px 3px; cursor:pointer;">Reject</button>';
+			// 	$message .= '</form>';
+			// 	$message .= '<p style="font-size:85%;">After clicking the button, please click on OK and then Continue to make your action complete.</p>';
+			// 	$message .= '<hr/>';
+			// 	$message .= '<p>Thank You<br/>' . $empName . '</p>';
+			// 	$adminName = $adminData['admin_name'];
+			// 	$send = Send_Mail($subject, $message, $adminName, $adminEmail, $empName, $empEmail);
+			// 	if ($send == 0) {
+			// 		$result['code'] = 0;
+			// 		$result['result'] = 'Leave Application has been successfully send to your employer through mail.';
+			// 	} else {
+			// 		$result['code'] = 1;
+			// 		$result['result'] = 'Notice: Leave Application not send through E-Mail, please try again.';
+			// 	}
+
+
+			// } else {
+			// 	$result['code'] = 1;
+			// 	$result['result'] = 'Something went wrong, please try again.';
+			// }
+
+			$result['code'] = 0;
+			$result['result'] = 'Leave application was succesfully submitted.';
 		} else {
 			$alreadyDates = substr($AppliedDates, 0, -2);
 			$result['code'] = 2;
@@ -1483,50 +1488,11 @@ function ApproveLeaveApplication()
 
 	$leaveId = $_REQUEST['id'];
 	$leaveSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `leave_id` = $leaveId AND `leave_status` = 'pending' LIMIT 0, 1");
-	if ($leaveSQL) {
-		if (mysqli_num_rows($leaveSQL) == 1) {
-			$leaveData = mysqli_fetch_assoc($leaveSQL);
-			$update = mysqli_query($db, "UPDATE `" . DB_PREFIX . "leaves` SET `leave_status` = 'approve' WHERE `leave_id` = $leaveId");
-			if ($update) {
-				$empData = GetEmployeeDataByEmpCode($leaveData['emp_code']);
-				if ($empData) {
-					$empName = $empData['first_name'] . ' ' . $empData['last_name'];
-					$empEmail = $empData['email'];
-					$subject = 'Leave Application Approved';
-					$message = '<p>Hi ' . $empData['first_name'] . '</p>';
-					$message .= '<p>Your leave application is approved.</p>';
-					$message .= '<p>Application Details:</p>';
-					$message .= '<p>Subject: ' . $leaveData['leave_subject'] . '</p>';
-					$message .= '<p>Leave Date(s): ' . $leaveData['leave_dates'] . '</p>';
-					$message .= '<p>Message: ' . $leaveData['leave_message'] . '</p>';
-					$message .= '<p>Leave Type: ' . $leaveData['leave_type'] . '</p>';
-					$message .= '<p>Status: ' . ucwords($leaveData['leave_status']) . '</p>';
-					$message .= '<hr/>';
-					$message .= '<p>Thank You,<br/>Smith Brother\'s Corporation Limited</p>';
-					$send = Send_Mail($subject, $message, $empName, $empEmail);
-					if ($send == 0) {
-						$result['code'] = 0;
-						$result['result'] = 'Leave Application is successfully approved. An email notification will be send to the employee.';
-					} else {
-						$result['code'] = 1;
-						$result['result'] = 'Leave Application is not approved, please try again.';
-					}
-				} else {
-					$result['code'] = 2;
-					$result['result'] = 'No such employee found.';
-				}
-			} else {
-				$result['code'] = 1;
-				$result['result'] = 'Something went wrong, please try again.';
-			}
-		} else {
-			$result['code'] = 2;
-			$result['result'] = 'This leave application is already verified.';
-		}
-	} else {
-		$result['code'] = 3;
-		$result['result'] = 'Something went wrong, please try again.';
-	}
+
+	$update = mysqli_query($db, "UPDATE `" . DB_PREFIX . "leaves` SET `leave_status` = 'approve' WHERE `leave_id` = $leaveId");
+	$result['code'] = 0;
+	$result['result'] = 'Leave Application is successfully approved.';
+
 
 	echo json_encode($result);
 }
@@ -1538,50 +1504,10 @@ function RejectLeaveApplication()
 
 	$leaveId = $_REQUEST['id'];
 	$leaveSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `leave_id` = $leaveId AND `leave_status` = 'pending' LIMIT 0, 1");
-	if ($leaveSQL) {
-		if (mysqli_num_rows($leaveSQL) == 1) {
-			$leaveData = mysqli_fetch_assoc($leaveSQL);
-			$update = mysqli_query($db, "UPDATE `" . DB_PREFIX . "leaves` SET `leave_status` = 'reject' WHERE `leave_id` = $leaveId");
-			if ($update) {
-				$empData = GetEmployeeDataByEmpCode($leaveData['emp_code']);
-				if ($empData) {
-					$empName = $empData['first_name'] . ' ' . $empData['last_name'];
-					$empEmail = $empData['email'];
-					$subject = 'Leave Application Rejected';
-					$message = '<p>Hi ' . $empData['first_name'] . '</p>';
-					$message .= '<p>Your leave application is rejected.</p>';
-					$message .= '<p>Application Details:</p>';
-					$message .= '<p>Subject: ' . $leaveData['leave_subject'] . '</p>';
-					$message .= '<p>Leave Date(s): ' . $leaveData['leave_dates'] . '</p>';
-					$message .= '<p>Message: ' . $leaveData['leave_message'] . '</p>';
-					$message .= '<p>Leave Type: ' . $leaveData['leave_type'] . '</p>';
-					$message .= '<p>Status: ' . ucwords($leaveData['leave_status']) . '</p>';
-					$message .= '<hr/>';
-					$message .= '<p>Thank You,<br/>Smith Brother\'s Corporation Limited</p>';
-					$send = Send_Mail($subject, $message, $empName, $empEmail);
-					if ($send == 0) {
-						$result['code'] = 0;
-						$result['result'] = 'Leave Application is rejected. An email notification will be send to the employee.';
-					} else {
-						$result['code'] = 1;
-						$result['result'] = 'Leave Application is not rejected, please try again.';
-					}
-				} else {
-					$result['code'] = 2;
-					$result['result'] = 'No such employee found.';
-				}
-			} else {
-				$result['code'] = 1;
-				$result['result'] = 'Something went wrong, please try again.';
-			}
-		} else {
-			$result['code'] = 2;
-			$result['result'] = 'This leave application is already verified.';
-		}
-	} else {
-		$result['code'] = 3;
-		$result['result'] = 'Something went wrong, please try again.';
-	}
+
+	$update = mysqli_query($db, "UPDATE `" . DB_PREFIX . "leaves` SET `leave_status` = 'reject' WHERE `leave_id` = $leaveId");
+	$result['code'] = 0;
+	$result['result'] = 'Leave Application is rejected. ';
 
 	echo json_encode($result);
 }

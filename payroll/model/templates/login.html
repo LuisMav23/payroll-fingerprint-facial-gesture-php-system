@@ -62,6 +62,12 @@
     {% endif %}
 
     <div class="container mt-5">
+      <!-- Header with Real-Time Date and Time -->
+      <div class="text-center mb-4">
+        <h2>Employee Face Recognition</h2>
+        <p id="dateTime" class="text-muted"></p>
+      </div>
+
       <div class="row">
         <!-- First Card -->
         <div class="col-md-6">
@@ -81,24 +87,22 @@
             ></canvas>
             <div class="card-body">
               <h5 id="name" class="card-title">Employee Name:</h5>
-
               <p id="faceConfidence" class="font-weight-bold"></p>
             </div>
           </div>
         </div>
+
         <!-- Second Card -->
         <div class="col-md-6">
           {% if request.args.get('account_type') %}
           <button
             type="button"
-            class="btn col btn-primary"
+            class="btn col btn-primary mb-3"
             data-toggle="modal"
             data-target="#uploadModal"
           >
             Create Face Data
           </button>
-          <br />
-          <br />
           {% endif %}
           <div class="card">
             <div class="card-body">
@@ -114,8 +118,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Loading Spinner -->
+      <div id="loader" class="text-center" style="display: none">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <p>Loading... Please wait</p>
+      </div>
+
       <!-- Capture Again Button -->
-      <div id="loader" style="display: none">Loading...</div>
       <div class="text-center mt-3">
         <button
           class="btn btn-success"
@@ -126,6 +138,53 @@
         </button>
       </div>
     </div>
+
+    <script>
+      // Real-time Date and Time
+      function updateDateTime() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const formattedTime = now.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        document.getElementById(
+          "dateTime"
+        ).textContent = `${formattedDate}, ${formattedTime}`;
+      }
+      setInterval(updateDateTime, 1000);
+
+      // Show loader
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+      }
+
+      // Hide loader
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+    </script>
+
+    <style>
+      /* Enhance Buttons and Cards */
+      .btn-primary,
+      .btn-success {
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 8px;
+      }
+
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+    </style>
 
     <!-- Modal -->
     <div
