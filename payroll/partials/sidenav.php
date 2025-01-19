@@ -54,56 +54,61 @@ if ($attendanceSQL) {
 		<?php } ?> -->
 
 		<ul class="sidebar-menu">
-			<li class="header">NAVIGATION</li>
-			<?php if ($_SESSION['Login_Type'] == 'admin') { ?>
-				<li class="<?php echo $page_name == "attendance" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>attendance/">
-						<i class="fa fa-calendar"></i> <span>Attendance</span>
-					</a>
-				</li>
-				<li class="<?php echo $page_name == "employees" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>employees/">
-						<i class="fa fa-users"></i> <span>Employees Section</span>
-					</a>
-				</li>
-				<li class="<?php echo $page_name == "salaries" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>salaries/">
-						<i class="fa fa-money"></i> <span>Salary Slips</span>
-					</a>
-				</li>
-				<li class="<?php echo $page_name == "leaves" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>leaves/">
-						<i class="fa fa-sign-out"></i> <span>Leave Management</span>
-					</a>
-				</li>
-				<li></li>
-				<li class="<?php echo $page_name == "payheads" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>payheads/">
-						<i class="fa fa-gratipay"></i> Pay Heads
-					</a>
-				</li>
-				<!-- <li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>holidays/">
-						<i class="fa fa-calendar-check-o"></i> <span>List Holidays</span>
-					</a>
-				</li> -->
-			<?php } else { ?>
-				<li class="<?php echo $page_name == "salaries" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>salaries/">
-						<i class="fa fa-money"></i> <span>Salary Slips</span>
-					</a>
-				</li>
-				<li class="<?php echo $page_name == "leaves" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>leaves/">
-						<i class="fa fa-sign-out"></i> <span>Leaves</span>
-					</a>
-				</li>
-				<!-- <li class="<?php echo $page_name == "holidays" ? 'active' : ''; ?>">
-					<a href="<?php echo BASE_URL; ?>holidays/">
-						<i class="fa fa-calendar-check-o"></i> <span>Holidays</span>
-					</a>
-				</li> -->
-			<?php } ?>
-		</ul>
+	<li class="header">NAVIGATION</li>
+	<?php if ($_SESSION['Login_Type'] == 'admin') { ?>
+		<li class="<?php echo $page_name == "attendance" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>attendance/">
+				<i class="fa fa-calendar"></i> <span>Attendance</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "employees" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>employees/">
+				<i class="fa fa-users"></i> <span>Employees Section</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "salaries" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>salaries/">
+				<i class="fa fa-money"></i> <span>Salary Slips</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "leaves" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>leaves/">
+				<i class="fa fa-sign-out"></i> <span>Leave Management</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "overtime-approval" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>overtime-approval/">
+				<i class="fa fa-clock-o"></i> <span>Overtime Approval</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "payheads" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>payheads/">
+				<i class="fa fa-gratipay"></i> Pay Heads
+			</a>
+		</li>
+	<?php } else { ?>
+		<li class="<?php echo $page_name == "salaries" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>salaries/">
+				<i class="fa fa-money"></i> <span>Salary Slips</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "attendance" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>attendance/">
+				<i class="fa fa-calendar"></i> <span>Attendance</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "leaves" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>leaves/">
+				<i class="fa fa-sign-out"></i> <span>Leaves</span>
+			</a>
+		</li>
+		<li class="<?php echo $page_name == "overtime-approval" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>overtime-approval/">
+				<i class="fa fa-clock-o"></i> <span>Overtime Approval</span>
+			</a>
+		</li>
+	<?php } ?>
+</ul>
+
 	</section>
 </aside>

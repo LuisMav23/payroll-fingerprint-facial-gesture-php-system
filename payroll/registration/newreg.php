@@ -6,11 +6,22 @@ $target_dir = dirname(__FILE__) . "/photos/";
 
 if (isset($_POST['submit'])) {
 
-    $selectSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "employees` ORDER BY `emp_id` DESC LIMIT 0, 100");
+    $selectSQL = mysqli_query($db, "SELECT `emp_code` FROM `" . DB_PREFIX . "employees` ORDER BY `emp_id` DESC LIMIT 1");
+    $selectDeletedSQL = mysqli_query($db, "SELECT `emp_code` FROM `" . DB_PREFIX . "deleted_employees` ORDER BY `emp_id` DESC LIMIT 1");
     if ($selectSQL) {
         if (mysqli_num_rows($selectSQL) > 0) {
-            $LastEMP = mysqli_num_rows($selectSQL);
-            $curEmpID = 'WY' . ($LastEMP < 10 ? sprintf("%02d", $LastEMP + 1) : $LastEMP + 1);
+            $row = mysqli_fetch_assoc($selectSQL);
+            $rowDeleted = mysqli_fetch_assoc($selectDeletedSQL);
+            $lastEmpCode = $row['emp_code'];
+            $lastDeletedEmpCode = $rowDeleted['emp_code'];
+            
+            // Extract the numeric part of the emp_code
+            $lastEmpNumber = (int)substr($lastEmpCode, 2); // Get the number after 'WY'
+            $lastDeletedEmpNumber = (int)substr($lastDeletedEmpCode, 2); // Get the number after 'WY'
+            $lastNumber = $lastEmpNumber > $lastDeletedEmpNumber ? $lastEmpNumber : $lastDeletedEmpNumber;
+            
+            // Generate the new emp_code
+            $curEmpID = 'WY' . sprintf("%02d", $lastNumber + 1);
         } else {
             $curEmpID = 'WY01';
         }

@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 from flask import Flask, request, jsonify
 import mysql.connector
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 
@@ -40,6 +40,57 @@ config = {
 def home():
     return render_template("home.html")
 
+@app.route("/apply-overtime", methods=["POST"])
+def apply_overtime():
+    data = request.get_json()
+    emp_code = data.get("emp_code")
+
+    if not emp_code:
+        return jsonify({"error": "Employee code is required"}), 400
+
+    try:
+
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor(dictionary=True)
+
+        today_date = datetime.now().date()
+        current_time = datetime.now().time()
+
+        # Check if the employee has timed out
+        check_query = """
+            SELECT * FROM wy_attendance
+            WHERE emp_code = %s AND attendance_date = %s
+            ORDER BY action_time DESC LIMIT 1
+        """
+        cursor.execute(check_query, (emp_code, today_date))
+        attendance_record = cursor.fetchone()
+        
+        if not attendance_record or attendance_record["action_name"] != 'time-out':
+            return jsonify({"error": "You must time out first before applying for overtime"}), 400
+
+        # Insert overtime record into wy_attendance
+        insert_attendance_query = """
+            INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time)
+            VALUES (%s, %s, %s, %s)
+        """
+        cursor.execute(insert_attendance_query, (emp_code, today_date, "overtime", current_time))
+
+        # Insert overtime record into wy_overtimes with status
+        insert_overtime_query = """
+            INSERT INTO wy_overtimes (emp_code, overtime_out_time, overtime_date, status)
+            VALUES (%s, %s, %s, %s)
+        """
+        cursor.execute(insert_overtime_query, (emp_code, attendance_record['action_time'], today_date, "pending"))
+        conn.commit()
+
+        return jsonify({"message": "Overtime application submitted successfully, pending approval"})
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": f"Database error: {err}"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @app.route("/gesture")
 def gesture():
@@ -47,22 +98,46 @@ def gesture():
     email = request.args.get("email")
 
     try:
+        # Connect to the database
         conn = mysql.connector.connect(**config)
         cursor = conn.cursor(dictionary=True)  # For better column name access
-        query = "SELECT * FROM wy_employees WHERE emp_code = %s"
-        cursor.execute(query, (email,))  # Execute query with parameterized input
+
+        # Query employee data
+        employee_query = "SELECT * FROM wy_employees WHERE emp_code = %s"
+        cursor.execute(employee_query, (email,))
         employee = cursor.fetchone()  # Fetch the first result
+
+        if not employee:
+            cursor.close()
+            conn.close()
+            return "Employee not found", 404
+
+        # Check if the employee has already timed in today
+        today_date = date.today().strftime("%Y-%m-%d")  # Get today's date in YYYY-MM-DD format
+        attendance_query = """
+            SELECT * FROM wy_attendance
+            WHERE emp_code = %s AND attendance_date = %s
+            ORDER BY action_time DESC LIMIT 1
+        """
+        cursor.execute(attendance_query, (email, today_date))
+        attendance_info = cursor.fetchone()
+        attendance_status = ''  # Fetch the result
+        if not attendance_info:
+            attendance_status = "Not timed in"
+        elif attendance_info["action_name"] == "time-in":
+            attendance_status = "Timed in"
+        elif attendance_info["action_name"] == "time-out":
+            attendance_status = "Timed out"
+        else:
+            attendance_status = "Overtime"
 
         cursor.close()
         conn.close()
-
-        if employee:
-            return render_template("gesture.html", employee=employee)
-        else:
-            return "Employee not found", 404
+        return render_template("gesture.html", employee=employee, attendance_status=attendance_status)
 
     except mysql.connector.Error as err:
         return f"Error: {err}", 500
+
 
 
 @app.route("/start_recognition")
@@ -119,12 +194,15 @@ def check_gesture():
         today_date = datetime.now().date()
         current_time = datetime.now().time()
 
+        # Define the late time threshold
+        late_time_threshold = datetime.strptime("07:15:00", "%H:%M:%S").time()
+
         check_query = """
-            SELECT attendance_id, action_name FROM wy_attendance
+            SELECT attendance_id, action_name, action_time FROM wy_attendance
             WHERE emp_code = %s AND attendance_date = %s
             ORDER BY action_time DESC LIMIT 1
         """
-        cursor.execute(check_query, (emp_code, today_date))
+        cursor.execute(check_query, (emp_code, today_date)) # Execute the query
         attendance_record = cursor.fetchone()
 
         if not attendance_record:
@@ -132,15 +210,19 @@ def check_gesture():
             if action_name != "time-in":
                 return jsonify({"error": "You must time in first"}), 400
 
+            # Determine if the user is late
+            is_late = current_time > late_time_threshold
+            emp_desc = "Late" if is_late else "On Time"
+
             insert_query = """
                 INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)
                 VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(
-                insert_query, (emp_code, today_date, "time-in", current_time, gesture)
+                insert_query, (emp_code, today_date, "time-in", current_time, emp_desc)
             )
             conn.commit()
-            return jsonify({"message": "Time-in recorded successfully"}), 200
+            return jsonify({"message": "Time-in recorded successfully", "status": emp_desc}), 200
 
         last_action = attendance_record[1]
 
@@ -171,28 +253,51 @@ def check_gesture():
 
         if action_name == "overtime":
             if last_action == "time-in":
+                return jsonify({"error": "You must time out first before overtime"}), 400
 
-                insert_query = """
-                    INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)
-                    VALUES (%s, %s, %s, %s, %s)
-                """
-                cursor.execute(
-                    insert_query,
-                    (emp_code, today_date, "time-out", current_time, gesture),
-                )
-                conn.commit()
+            # Get the time when the employee checked out (time-out)
+            check_out_query = """
+                SELECT action_time FROM wy_attendance
+                WHERE emp_code = %s AND attendance_date = %s AND action_name = %s
+                ORDER BY action_time DESC LIMIT 1
+            """
+            cursor.execute(check_out_query, (emp_code, today_date, "time-out"))
+            checkout_record = cursor.fetchone()
 
-            update_query = """
-                UPDATE wy_attendance
-                SET action_name = %s, action_time = %s, emp_desc = %s
-                WHERE attendance_id = %s AND action_name != 'time-in'
+            if not checkout_record:
+                return jsonify({"error": "You must check out before recording overtime"}), 400
+
+            check_out_time = checkout_record[0]
+
+            # Define regular working hours (e.g., 8 hours)
+            regular_working_hours = timedelta(hours=8)
+
+            # Calculate the overtime
+            check_in_time = datetime.combine(today_date, datetime.min.time()) + timedelta(hours=7)  # assuming 7 AM check-in time
+            worked_hours = datetime.combine(today_date, current_time) - check_in_time
+            overtime_duration = max(worked_hours - regular_working_hours, timedelta(0))  # Calculate overtime
+
+            overtime_hours = overtime_duration.total_seconds() / 3600  # Convert to hours
+
+            insert_query = """
+                INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)
+                VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(
-                update_query,
-                ("overtime", current_time, gesture, attendance_record[0]),
+                insert_query, (emp_code, today_date, "overtime", current_time, gesture)
             )
             conn.commit()
-            return jsonify({"message": "Overtime recorded successfully"}), 200
+
+            # Insert overtime record into wy_overtimes with calculated overtime hours
+            insert_overtime_query = """
+                INSERT INTO wy_overtimes (emp_code, overtime_hours, overtime_date, status)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(insert_overtime_query, (emp_code, overtime_hours, today_date, "pending"))
+            conn.commit()
+
+            return jsonify({"message": f"Overtime recorded successfully: {overtime_hours} hours"}), 200
+
 
         return jsonify({"error": "Invalid action sequence"}), 400
 
@@ -203,7 +308,7 @@ def check_gesture():
         if conn.is_connected():
             cursor.close()
             conn.close()
-
+   
 
 @app.route("/train", methods=["POST"])
 def train():
@@ -310,4 +415,4 @@ def capture():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host="localhost")

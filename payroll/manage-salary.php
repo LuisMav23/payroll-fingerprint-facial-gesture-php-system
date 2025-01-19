@@ -124,9 +124,9 @@ if ($checkSalarySQL) {
 												<thead>
 													<tr>
 														<th width="35%">Earnings</th>
-														<th width="15%" class="text-right">Amount (Rs.)</th>
+														<th width="15%" class="text-right">Amount (Php)</th>
 														<th width="35%">Deductions</th>
-														<th width="15%" class="text-right">Amount (Rs.)</th>
+														<th width="15%" class="text-right">Amount (Php)</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -233,9 +233,9 @@ if ($checkSalarySQL) {
 											<thead>
 												<tr>
 													<th width="35%">Earnings</th>
-													<th width="15%" class="text-right">Amount (Rs.)</th>
+													<th width="15%" class="text-right">Amount (Php)</th>
 													<th width="35%">Deductions</th>
-													<th width="15%" class="text-right">Amount (Rs.)</th>
+													<th width="15%" class="text-right">Amount (Php)</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -304,7 +304,7 @@ if ($checkSalarySQL) {
 										<div class="col-sm-6">
 											<h3 class="text-success" style="margin-top:0">
 												Net Salary Payable:
-												Rs.<?php echo number_format(($totalEarnings - $totalDeductions), 2, '.', ','); ?>
+												₱ <?php echo number_format(($totalEarnings - $totalDeductions), 2, '.', ','); ?>
 												<small>(In words:
 													<?php echo ucfirst(ConvertNumberToWords(($totalEarnings - $totalDeductions))); ?>)</small>
 											</h3>

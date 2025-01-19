@@ -6,11 +6,29 @@ switch ($case) {
 	case 'LoginProcessHandler':
 		LoginProcessHandler();
 		break;
+	case 'GetAllOvertimes':
+		GetAllOvertimes();
+		break;
+	case 'GetAllEmployees':
+		GetAllEmployees();
+		break;
+	case 'ApproveOvertime':
+		ApproveOvertime();
+		break;
+	case 'RejectOvertime':
+		RejectOvertime();
+		break;
 	case 'AttendanceProcessHandler':
 		AttendanceProcessHandler();
 		break;
 	case 'LoadingAttendance':
 		LoadingAttendance();
+		break;
+	case 'LoadingAttendanceByEmpCode':
+		LoadingAttendanceByEmpCode();
+		break;
+	case 'LoadingAttendanceByEmpId':
+		LoadingAttendanceByEmpId();
 		break;
 	case 'LoadingSalaries':
 		LoadingSalaries();
@@ -179,6 +197,97 @@ function AttendanceProcessHandler()
 	echo json_encode($result);
 }
 
+function GetAllOvertimes()
+{
+    global $db;
+
+    $sql = "SELECT * FROM `" . DB_PREFIX . "overtimes`";
+    $query = mysqli_query($db, $sql);
+    $data = array();
+
+    while ($row = mysqli_fetch_assoc($query)) {
+        $nestedData = array();
+        $nestedData[] = $row["id"];
+        $nestedData[] = $row["emp_code"];
+        $nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
+        $nestedData[] = $row["overtime_out_time"]; // Add time out
+        $nestedData[] = $row["status"];
+        
+        $data[] = $nestedData;
+    }
+    header('Content-Type: application/json');
+    echo json_encode(array('data' => $data));
+}
+
+function GetAllEmployees()
+{
+    global $db;
+
+    $sql = "SELECT * FROM `" . DB_PREFIX . "employees`";
+    $query = mysqli_query($db, $sql);
+    $data = array();
+
+    while ($row = mysqli_fetch_assoc($query)) {
+        $nestedData = array();
+        $nestedData[] = $row["emp_code"];
+        $nestedData[] = $row["first_name"];
+        $nestedData[] = $row["last_name"];
+        $nestedData[] = $row["designation"];
+        $nestedData[] = $row["department"];
+        $nestedData[] = date('d-m-Y', strtotime($row["hire_date"])); // Format hire date
+        $nestedData[] = '<img width="75" src="' . REG_URL . 'photos/' . $row["photo"] . '" alt="' . $row["emp_code"] . '" />';
+        
+        $data[] = $nestedData;
+    }
+    header('Content-Type: application/json');
+    echo json_encode(array('data' => $data));
+}
+
+function GetEmployeeAttendance() {
+	global $db;
+	$sql = ''. DB_PREFIX . '';
+}
+
+function ApproveOvertime()
+{
+    global $db;
+
+    $overtime_id = $_POST['overtime_id'];
+    if (empty($overtime_id)) {
+        echo json_encode(['code' => 1, 'result' => 'Overtime ID is required.']);
+        return;
+    }
+
+    $sql = "UPDATE `" . DB_PREFIX . "overtimes` SET `status` = 'approved' WHERE `id` = $overtime_id";
+    $query = mysqli_query($db, $sql);
+
+    if ($query) {
+        echo json_encode(['code' => 0, 'result' => 'Overtime approved successfully.']);
+    } else {
+        echo json_encode(['code' => 1, 'result' => 'Failed to approve overtime.']);
+    }
+}
+
+function RejectOvertime()
+{
+    global $db;
+
+    $overtime_id = $_POST['overtime_id'];
+    if (empty($overtime_id)) {
+        echo json_encode(['code' => 1, 'result' => 'Overtime ID is required.']);
+        return;
+    }
+
+    $sql = "UPDATE `" . DB_PREFIX . "overtimes` SET `status` = 'rejected' WHERE `id` = $overtime_id";
+    $query = mysqli_query($db, $sql);
+
+    if ($query) {
+        echo json_encode(['code' => 0, 'result' => 'Overtime rejected successfully.']);
+    } else {
+        echo json_encode(['code' => 1, 'result' => 'Failed to reject overtime.']);
+    }
+}
+
 function LoadingAttendance()
 {
 	global $db;
@@ -191,7 +300,7 @@ function LoadingAttendance()
 
 	$query = mysqli_query($db, $sql);
 	$data = array();
-
+	
 	while ($row = mysqli_fetch_assoc($query)) {
 		$nestedData = array();
 		$nestedData[] = date('d-m-Y', strtotime($row['attendance_date']));
@@ -215,6 +324,183 @@ function LoadingAttendance()
 	echo json_encode(array('data' => $data));
 }
 
+function LoadingAttendanceByEmpCode()
+{
+    global $db;
+
+    // Validate and sanitize emp_code to prevent SQL injection
+    if (!isset($_GET['emp_code'])) {
+        echo json_encode(['error' => 'Employee code is required']);
+        return;
+    }
+
+    $emp_code = mysqli_real_escape_string($db, $_GET['emp_code']);
+
+    // SQL query to fetch attendance records
+    $sql = "SELECT 
+                `att`.`attendance_date`, 
+                `emp`.`emp_code`, 
+                `emp`.`first_name`, 
+                `emp`.`last_name`, 
+                `att`.`action_time`, 
+                `att`.`emp_desc`
+            FROM `" . DB_PREFIX . "attendance` AS `att`
+            JOIN `" . DB_PREFIX . "employees` AS `emp` 
+                ON `emp`.`emp_code` = `att`.`emp_code`
+            WHERE `emp`.`emp_code` = '$emp_code'
+            ORDER BY `att`.`attendance_date`, `att`.`action_time`";
+
+    $query = mysqli_query($db, $sql);
+
+    if (!$query) {
+        echo json_encode(['error' => 'Database query failed: ' . mysqli_error($db)]);
+        return;
+    }
+
+    $data = [];
+    $attendance = [];
+
+    while ($row = mysqli_fetch_assoc($query)) {
+        $date = $row['attendance_date'];
+        if (!isset($attendance[$date])) {
+            // Initialize new attendance entry for the date
+            $attendance[$date] = [
+                'date' => date('d-m-Y', strtotime($date)),
+                'emp_code' => $row['emp_code'],
+                'emp_name' => '<a target="_blank" href="' . REG_URL . 'reports/' . $row['emp_code'] . '/">' . $row['first_name'] . ' ' . $row['last_name'] . '</a>',
+                'punch_in' => '',
+                'punch_out' => '',
+                'work_hours' => '0 Hrs',
+                'desc_in' => '',
+                'desc_out' => ''
+            ];
+        }
+
+        // Assign punch-in or punch-out based on existing data
+        $time = $row['action_time'];
+        $desc = $row['emp_desc'];
+        if (empty($attendance[$date]['punch_in'])) {
+            $attendance[$date]['punch_in'] = date('h:i:s A', strtotime($time));
+            $attendance[$date]['desc_in'] = $desc;
+        } elseif (empty($attendance[$date]['punch_out'])) {
+            $attendance[$date]['punch_out'] = date('h:i:s A', strtotime($time));
+            $attendance[$date]['desc_out'] = $desc;
+
+            // Calculate work hours
+            $datetime1 = new DateTime($attendance[$date]['punch_in']);
+            $datetime2 = new DateTime($attendance[$date]['punch_out']);
+            $interval = $datetime1->diff($datetime2);
+            $attendance[$date]['work_hours'] = $interval->format('%h') . " Hrs | " . $interval->format('%i') . " Min";
+        }
+    }
+
+    // Convert associative array to indexed array for DataTables
+    foreach ($attendance as $record) {
+        $data[] = [
+            $record['date'],        // Date
+            $record['emp_code'],   // Employee Code
+            $record['emp_name'],   // Employee Name
+            $record['punch_in'],   // Punch-in Time
+            $record['punch_out'],  // Punch-out Time
+            $record['work_hours'], // Work Hours
+            $record['desc_in'],    // Description for Punch-in
+            $record['desc_out']    // Description for Punch-out
+        ];
+    }
+
+    // Return JSON response
+    header('Content-Type: application/json');
+    echo json_encode(['data' => $data]);
+}
+
+function LoadingAttendanceByEmpId()
+{
+    global $db;
+
+    // Validate and sanitize emp_code to prevent SQL injection
+    if (!isset($_GET['emp_id'])) {
+        echo json_encode(['error' => 'Employee id is required']);
+        return;
+    }
+
+    $emp_id = mysqli_real_escape_string($db, $_GET['emp_id']);
+
+    // SQL query to fetch attendance records
+    $sql = "SELECT 
+                `att`.`attendance_date`, 
+                `emp`.`emp_code`, 
+                `emp`.`first_name`, 
+                `emp`.`last_name`, 
+                `att`.`action_time`, 
+                `att`.`emp_desc`
+            FROM `" . DB_PREFIX . "attendance` AS `att`
+            JOIN `" . DB_PREFIX . "employees` AS `emp` 
+                ON `emp`.`emp_code` = `att`.`emp_code`
+            WHERE `emp`.`emp_id` = '$emp_id'
+            ORDER BY `att`.`attendance_date`, `att`.`action_time`";
+
+    $query = mysqli_query($db, $sql);
+
+    if (!$query) {
+        echo json_encode(['error' => 'Database query failed: ' . mysqli_error($db)]);
+        return;
+    }
+
+    $data = [];
+    $attendance = [];
+
+    while ($row = mysqli_fetch_assoc($query)) {
+        $date = $row['attendance_date'];
+        if (!isset($attendance[$date])) {
+            // Initialize new attendance entry for the date
+            $attendance[$date] = [
+                'date' => date('d-m-Y', strtotime($date)),
+                'emp_code' => $row['emp_code'],
+                'emp_name' => '<a target="_blank" href="' . REG_URL . 'reports/' . $row['emp_code'] . '/">' . $row['first_name'] . ' ' . $row['last_name'] . '</a>',
+                'punch_in' => '',
+                'punch_out' => '',
+                'work_hours' => '0 Hrs',
+                'desc_in' => '',
+                'desc_out' => ''
+            ];
+        }
+
+        // Assign punch-in or punch-out based on existing data
+        $time = $row['action_time'];
+        $desc = $row['emp_desc'];
+        if (empty($attendance[$date]['punch_in'])) {
+            $attendance[$date]['punch_in'] = date('h:i:s A', strtotime($time));
+            $attendance[$date]['desc_in'] = $desc;
+        } elseif (empty($attendance[$date]['punch_out'])) {
+            $attendance[$date]['punch_out'] = date('h:i:s A', strtotime($time));
+            $attendance[$date]['desc_out'] = $desc;
+
+            // Calculate work hours
+            $datetime1 = new DateTime($attendance[$date]['punch_in']);
+            $datetime2 = new DateTime($attendance[$date]['punch_out']);
+            $interval = $datetime1->diff($datetime2);
+            $attendance[$date]['work_hours'] = $interval->format('%h') . " Hrs | " . $interval->format('%i') . " Min";
+        }
+    }
+
+    // Convert associative array to indexed array for DataTables
+    foreach ($attendance as $record) {
+        $data[] = [
+            $record['date'],        // Date
+            $record['emp_code'],   // Employee Code
+            $record['emp_name'],   // Employee Name
+            $record['punch_in'],   // Punch-in Time
+            $record['punch_out'],  // Punch-out Time
+            $record['work_hours'], // Work Hours
+            $record['desc_in'],    // Description for Punch-in
+            $record['desc_out']    // Description for Punch-out
+        ];
+    }
+
+    // Return JSON response
+    header('Content-Type: application/json');
+    echo json_encode(['data' => $data]);
+}
 
 function LoadingSalaries()
 {
@@ -813,21 +1099,47 @@ function GetEmployeeByID()
 
 function DeleteEmployeeByID()
 {
-	$result = array();
-	global $db;
+    $result = array();
+    global $db;
 
-	$emp_code = $_POST['emp_code'];
-	$empSQL = mysqli_query($db, "DELETE FROM `" . DB_PREFIX . "employees` WHERE `emp_code` = '$emp_code'");
-	if ($empSQL) {
-		$result['result'] = 'Employee record is successfully deleted.';
-		$result['code'] = 0;
-	} else {
-		$result['result'] = 'Something went wrong, please try again.';
-		$result['code'] = 1;
-	}
+    $emp_code = $_POST['emp_code'];
 
-	echo json_encode($result);
+    // Retrieve the employee record to archive
+    $getEmpSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "employees` WHERE `emp_code` = '$emp_code'");
+    if ($getEmpSQL && mysqli_num_rows($getEmpSQL) > 0) {
+        $employeeData = mysqli_fetch_assoc($getEmpSQL);
+
+        // Build the INSERT query for the archive table
+        $columns = array_keys($employeeData);
+        $values = array_map(function ($value) use ($db) {
+            return "'" . mysqli_real_escape_string($db, $value) . "'";
+        }, array_values($employeeData));
+
+        $archiveSQL = "INSERT INTO `" . DB_PREFIX . "deleted_employees` (" . implode(", ", $columns) . ") VALUES (" . implode(", ", $values) . ")";
+
+        // Execute the INSERT query
+        if (mysqli_query($db, $archiveSQL)) {
+            // If the archiving is successful, delete the employee record
+            $deleteSQL = "DELETE FROM `" . DB_PREFIX . "employees` WHERE `emp_code` = '$emp_code'";
+            if (mysqli_query($db, $deleteSQL)) {
+                $result['result'] = 'Employee record is successfully archived and deleted.';
+                $result['code'] = 0;
+            } else {
+                $result['result'] = 'Archiving succeeded, but deletion failed.';
+                $result['code'] = 1;
+            }
+        } else {
+            $result['result'] = 'Failed to archive the employee record. Deletion aborted.';
+            $result['code'] = 1;
+        }
+    } else {
+        $result['result'] = 'Employee record not found.';
+        $result['code'] = 1;
+    }
+
+    echo json_encode($result);
 }
+
 
 function EditEmployeeDetailsByID()
 {
@@ -890,8 +1202,31 @@ function GeneratePaySlip()
 	$deductions_heads = $_POST['deductions_heads'];
 	$deductions_amounts = $_POST['deductions_amounts'];
 
+	$overtime_rate = 1.5; // Example overtime rate per hour (can be customized)
+
 	if (!empty($emp_code) && !empty($pay_month)) {
 		try {
+			// Query for approved overtime hours
+			$overtimeQuery = "
+				SELECT SUM(overtime_hours) AS total_overtime_hours 
+				FROM " . DB_PREFIX . "overtime 
+				WHERE emp_code = '$emp_code' 
+				  AND DATE_FORMAT(overtime_date, '%Y-%m') = '$pay_month' 
+				  AND status = 'approved'";
+			$overtimeResult = mysqli_query($db, $overtimeQuery);
+
+			$overtimeHours = 0;
+			if ($overtimeResult && mysqli_num_rows($overtimeResult) > 0) {
+				$overtimeData = mysqli_fetch_assoc($overtimeResult);
+				$overtimeHours = floatval($overtimeData['total_overtime_hours']);
+			}
+
+			$overtimeEarnings = $overtimeHours * $overtime_rate;
+
+			// Add overtime to earnings
+			$earnings_heads[] = "Overtime Pay";
+			$earnings_amounts[] = $overtimeEarnings;
+
 			// Process earnings
 			for ($i = 0; $i < count($earnings_heads); $i++) {
 				$earnings_head = mysqli_real_escape_string($db, $earnings_heads[$i]);
@@ -909,7 +1244,7 @@ function GeneratePaySlip()
 				}
 			}
 
-			// Process deductions
+			// Process deductions (no changes needed here)
 			for ($i = 0; $i < count($deductions_heads); $i++) {
 				$deductions_head = mysqli_real_escape_string($db, $deductions_heads[$i]);
 				$deductions_amount = number_format($deductions_amounts[$i], 2, '.', '');
