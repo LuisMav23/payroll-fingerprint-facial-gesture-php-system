@@ -277,7 +277,7 @@ def check_gesture():
             worked_hours = datetime.combine(today_date, current_time) - check_in_time
             overtime_duration = max(worked_hours - regular_working_hours, timedelta(0))  # Calculate overtime
 
-            overtime_hours = overtime_duration.total_seconds() / 3600  # Convert to hours
+            overtime_hours = int(overtime_duration.total_seconds() / 3600)  # Convert to hours
 
             insert_query = """
                 INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)

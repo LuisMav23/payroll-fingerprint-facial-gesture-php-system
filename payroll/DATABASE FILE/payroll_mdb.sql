@@ -269,6 +269,52 @@ CREATE TABLE `wy_salaries` (
   `generate_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+CREATE TABLE `wy_overtimes` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_code VARCHAR(255) NOT NULL,=
+    overtime_hours DECIMAL(10, 2) NOT NULL,
+    overtime_date DATE NOT NULL,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
+
+CREATE TABLE `wy_deleted_employees` (
+  `emp_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `emp_code` VARCHAR(255) NOT NULL,
+  `emp_password` VARCHAR(255) NOT NULL,
+  `first_name` VARCHAR(255) NOT NULL,
+  `last_name` VARCHAR(255) NOT NULL,
+  `dob` DATE NOT NULL,
+  `gender` VARCHAR(50) NOT NULL,
+  `merital_status` VARCHAR(50) NOT NULL,
+  `nationality` VARCHAR(100) NOT NULL,
+  `address` TEXT NOT NULL,
+  `city` VARCHAR(100) NOT NULL,
+  `state` VARCHAR(100) NOT NULL,
+  `country` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `mobile` VARCHAR(20) NOT NULL,
+  `telephone` VARCHAR(20) DEFAULT NULL,
+  `identity_doc` VARCHAR(255) DEFAULT NULL,
+  `identity_no` VARCHAR(255) DEFAULT NULL,
+  `emp_type` VARCHAR(50) NOT NULL,
+  `joining_date` DATE NOT NULL,
+  `blood_group` VARCHAR(10) DEFAULT NULL,
+  `photo` VARCHAR(255) DEFAULT NULL,
+  `designation` VARCHAR(255) NOT NULL,
+  `department` VARCHAR(255) NOT NULL,
+  `pan_no` VARCHAR(255) DEFAULT NULL,
+  `bank_name` VARCHAR(255) DEFAULT NULL,
+  `account_no` VARCHAR(255) DEFAULT NULL,
+  `ifsc_code` VARCHAR(255) DEFAULT NULL,
+  `pf_account` VARCHAR(255) DEFAULT NULL,
+  `created` DATETIME NOT NULL,
+  `deleted_at` DATETIME NOT NULL, -- New column to track when the record was archived
+  PRIMARY KEY (`emp_id`)
+)
+
+
 --
 -- Dumping data for table `wy_salaries`
 --

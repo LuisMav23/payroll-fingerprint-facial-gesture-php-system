@@ -210,7 +210,7 @@ function GetAllOvertimes()
         $nestedData[] = $row["id"];
         $nestedData[] = $row["emp_code"];
         $nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
-        $nestedData[] = $row["overtime_out_time"]; // Add time out
+        $nestedData[] = $row["overtime_hours"]; // Add time out
         $nestedData[] = $row["status"];
         
         $data[] = $nestedData;
@@ -1202,20 +1202,20 @@ function GeneratePaySlip()
 	$deductions_heads = $_POST['deductions_heads'];
 	$deductions_amounts = $_POST['deductions_amounts'];
 
-	$overtime_rate = 1.5; // Example overtime rate per hour (can be customized)
+	$overtime_rate = 75; // Example overtime rate per hour (can be customized)
 
 	if (!empty($emp_code) && !empty($pay_month)) {
 		try {
 			// Query for approved overtime hours
 			$overtimeQuery = "
 				SELECT SUM(overtime_hours) AS total_overtime_hours 
-				FROM " . DB_PREFIX . "overtime 
+				FROM " . DB_PREFIX . "overtimes 
 				WHERE emp_code = '$emp_code' 
 				  AND DATE_FORMAT(overtime_date, '%Y-%m') = '$pay_month' 
 				  AND status = 'approved'";
 			$overtimeResult = mysqli_query($db, $overtimeQuery);
-
-			$overtimeHours = 0;
+			
+			$overtimeHours = 100;
 			if ($overtimeResult && mysqli_num_rows($overtimeResult) > 0) {
 				$overtimeData = mysqli_fetch_assoc($overtimeResult);
 				$overtimeHours = floatval($overtimeData['total_overtime_hours']);
