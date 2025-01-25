@@ -26,7 +26,8 @@
       justify-content: start;
       align-items: center;
       height: 100vh;
-      background-color: white;
+      background-color: #111733;
+      color: white;
     }
     p{
       font-size: medium;
@@ -56,6 +57,21 @@
       padding: 20px;
     }
 
+    .page-title {
+        font-size: 4em;
+        color: yellow;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+        margin-bottom: 5px;
+        animation: animate 3s linear infinite;
+    }
+
+    .date-time-text {
+      font-size: 1.5em;
+      font-weight: semibold;
+    }
+
     #info {
       width: 60%; /* Adjust width of the info section */
     }
@@ -81,8 +97,8 @@
 <body>
     <!-- Header with Real-Time Date and Time -->
     <div class="text-center mb-4">
-      <h2>Employee Face Recognition</h2>
-      <p id="dateTime" class="text-muted"></p>
+      <h2 class="page-title">Employee Face Recognition</h2>
+      <p id="dateTime" class="date-time-text"></p>
     </div>
     <div id="row-container" class="flex justify-center flex-row items-center mt-3">
       <div id="info" class="container card flex flex-col justify-start items-center">
