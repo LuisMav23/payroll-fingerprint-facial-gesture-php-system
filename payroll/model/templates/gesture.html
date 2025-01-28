@@ -1,107 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
-<link
-  href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-/>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        height: 100vh;
+        background-color: #111733;
+      }
+      p {
+        font-size: medium;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      align-items: center;
-      height: 100vh;
-      background-color: #111733;
-      color: white;
-    }
-    p{
-      font-size: medium;
-    }
+      canvas {
+        border-radius: 10px;
+      }
 
-    canvas {
-      border-radius: 10px;
-    }
+      .btn-primary,
+      .btn-success {
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 8px;
+      }
 
-    .btn-primary,
-    .btn-success {
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 8px;
-    }
+      .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 35px;
+      }
+      #row-container {
+        display: flex;
+        justify-content: space-between; /* Optional: Adjust spacing */
+        align-items: center; /* Align items vertically */
+        gap: 20px; /* Add space between items */
+        padding: 20px;
+      }
 
-    .card {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      padding: 35px;
-    }
-    #row-container {
-      display: flex;
-      justify-content: space-between; /* Optional: Adjust spacing */
-      align-items: center; /* Align items vertically */
-      gap: 20px; /* Add space between items */
-      padding: 20px;
-    }
-
-    .page-title {
+      .page-title {
         font-size: 4em;
         color: yellow;
-        font-family: 'Orbitron', sans-serif;
+        font-family: "Orbitron", sans-serif;
         font-weight: 700;
         text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
         margin-bottom: 5px;
         animation: animate 3s linear infinite;
-    }
+      }
 
-    .date-time-text {
-      font-size: 1.5em;
-      font-weight: semibold;
-    }
+      .date-time-text {
+        font-size: 1.5em;
+        font-weight: semibold;
+        color: white;
+      }
 
-    #info {
-      width: 60%; /* Adjust width of the info section */
-    }
+      #info {
+        width: 60%; /* Adjust width of the info section */
+      }
 
-    #canvas-container {
-      flex-grow: 1; /* Make the canvas container flexible */
-    }
-    .text-yellow {
-      color: #f1c40f;
-    }
-    .text-green {
-      color: #2ecc71;
-    }
-    .text-red {
-      color: #e74c3c;
-    }
-    .text-orange {
-      color: #f39c12;
-    } 
-  </style>
-</head>
+      #canvas-container {
+        flex-grow: 1; /* Make the canvas container flexible */
+      }
+      .text-yellow {
+        color: #f1c40f;
+      }
+      .text-green {
+        color: #2ecc71;
+      }
+      .text-red {
+        color: #e74c3c;
+      }
+      .text-orange {
+        color: #f39c12;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
     <!-- Header with Real-Time Date and Time -->
     <div class="text-center mb-4">
       <h2 class="page-title">Employee Face Recognition</h2>
       <p id="dateTime" class="date-time-text"></p>
     </div>
-    <div id="row-container" class="flex justify-center flex-row items-center mt-3">
-      <div id="info" class="container card flex flex-col justify-start items-center">
+    <div
+      id="row-container"
+      class="flex justify-center flex-row items-center mt-3"
+    >
+      <div
+        id="info"
+        class="container card flex flex-col justify-start items-center"
+      >
         <h3>Employee Details</h3>
 
         {% if employee %}
@@ -116,22 +121,45 @@
           <strong>Photo:</strong>
           <img
             src="http://localhost/payroll-fingerprint-facial-gesture-php-system/payroll/registration/photos/{{  employee.photo}}"
-            alt="Employee Photo" width="100" />
+            alt="Employee Photo"
+            width="100"
+          />
         </p>
-          {% if attendance_status == 'Not timed in'%}
-          <p><strong>Attendance Status:</strong> <span class="text-yellow">{{ attendance_status }}</span></p>
-          {% elif attendance_status == 'Timed in' %}
-          <p><strong>Attendance Status:</strong> <span class="text-green">{{ attendance_status }}</span></p>
-          {% elif attendance_status == 'Timed out' %}
-          <p><strong>Attendance Status:</strong> <span class="text-red">{{ attendance_status }}</span></p>
-          {% else %}
-            <p><strong>Attendance Status:</strong> <span class="text-orange">{{ attendance_status }}</span></p>
-          {% endif %}
+        {% if attendance_status == 'Not timed in'%}
+        <p>
+          <strong>Attendance Status:</strong>
+          <span class="text-yellow">{{ attendance_status }}</span>
+        </p>
+        {% elif attendance_status == 'Timed in' %}
+        <p>
+          <strong>Attendance Status:</strong>
+          <span class="text-green">{{ attendance_status }}</span>
+        </p>
+        {% elif attendance_status == 'Timed out' %}
+        <p>
+          <strong>Attendance Status:</strong>
+          <span class="text-red">{{ attendance_status }}</span>
+        </p>
+        {% else %}
+        <p>
+          <strong>Attendance Status:</strong>
+          <span class="text-orange">{{ attendance_status }}</span>
+        </p>
+        {% endif %}
         <button
           id="applyOvertimeBtn"
           class="btn btn-primary mt-3"
           onclick="applyForOvertime('{{ employee.emp_code }}')"
-          {% if attendance_status != 'Timed out' %} disabled {% endif %}>
+          {%
+          if
+          attendance_status
+          !="Timed out"
+          %}
+          disabled
+          {%
+          endif
+          %}
+        >
           Apply for Overtime
         </button>
         {% else %}
@@ -141,210 +169,206 @@
       <div id="canvas-container"></div>
     </div>
 
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
 
-  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+    <!-- Include p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Include TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+    <!-- Include ml5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
 
-  <!-- Include p5.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-  <!-- Include TensorFlow.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
-  <!-- Include ml5.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
-
-  <script>
-    // Real-time Date and Time
-    function updateDateTime() {
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString(undefined, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      const formattedTime = now.toLocaleTimeString(undefined, {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      document.getElementById(
-        "dateTime"
-      ).textContent = `${formattedDate}, ${formattedTime}`;
-    }
-    setInterval(updateDateTime, 1000);
-
-    // Show loader
-    function showLoader() {
-      document.getElementById("loader").style.display = "block";
-    }
-
-    // Hide loader
-    function hideLoader() {
-      document.getElementById("loader").style.display = "none";
-    }
-  </script>
-
-  <script>
-    function applyForOvertime(empCode) {
-      fetch('/apply-overtime', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ emp_code: empCode }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.message) {
-            alert(data.message);
-          } else if (data.error) {
-            alert('Error: ' + data.error);
-          }
-        })
-        .catch((error) => {
-          alert('Error applying for overtime: ' + error);
+    <script>
+      // Real-time Date and Time
+      function updateDateTime() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
         });
-    }
-  </script>
-
-
-  <script>
-    let video;
-    let handPose;
-    let hands = [];
-
-    let lastRequestTime = 0; // To store the timestamp of the last request
-    let lastGesture = ""; // To store the last gesture sent
-    let gestureCooldown = false; // To prevent multiple requests for the same gesture
-
-    function setup() {
-      const canvas = createCanvas(640, 480);
-      canvas.parent('canvas-container');
-      video = createCapture(VIDEO);
-      video.size(width, height);
-      video.hide();
-
-      // Initialize handPose and start detecting hands
-      handPose = ml5.handPose(video, modelReady);
-    }
-
-    function modelReady() {
-      console.log("Model Loaded!");
-      detectHands();
-    }
-
-    function detectHands() {
-      handPose.detect(video, gotHands);
-    }
-
-    function gotHands(results) {
-      hands = results;
-      detectHands();
-    }
-
-    function sendGestureToFlask(gesture) {
-      const currentTime = new Date().getTime(); // Get current timestamp
-      const email = new URLSearchParams(window.location.search).get("email");
-
-      // Check if the cooldown is active
-      if (gestureCooldown) {
-        console.log("Cooldown active. Gesture request blocked.");
-        return; // Exit if cooldown is active
-      }
-
-      // Check if 3 seconds have passed since the last request
-      if (currentTime - lastRequestTime < 13000) {
-        console.log("Request blocked due to spam prevention.");
-        return; // Exit the function if less than 3 seconds have passed
-      }
-
-      // Check if the gesture is different from the last gesture sent
-      if (gesture === lastGesture) {
-        console.log("Gesture has not changed, not sending request.");
-        return; // Exit if the gesture hasn't changed
-      }
-
-      // Set cooldown and update last request values
-      gestureCooldown = true; // Activate cooldown
-      lastRequestTime = currentTime;
-      lastGesture = gesture;
-
-      console.log("Sending gesture:", gesture);
-
-      fetch("/gesture-check", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          gesture: gesture,
-          empcode: email, // Use 'empcode' as the key
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.message) {
-            alert(data.message);
-            location.reload()
-          } else if (data.error) {
-            alert("Error: " + data.error); // Show error message
-          }
-          ; // Reload the page after sending the gesture
-        })
-        .catch((error) => {
-          alert("Error sending gesture: " + error); // Show error on network failure
-        })
-        .finally(() => {
-          // Reset cooldown after a delay
-          setTimeout(() => {
-            gestureCooldown = false;
-          }, 3000); // Adjust the delay as needed
+        const formattedTime = now.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
         });
-    }
+        document.getElementById(
+          "dateTime"
+        ).textContent = `${formattedDate}, ${formattedTime}`;
+      }
+      setInterval(updateDateTime, 1000);
 
-    function draw() {
-      image(video, 0, 0);
+      // Show loader
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+      }
 
-      if (hands.length > 0) {
-        let hand = hands[0];
-        let index = hand.index_finger_tip;
-        let middle = hand.middle_finger_tip;
-        let thumb = hand.thumb_tip;
+      // Hide loader
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+    </script>
 
-        for (let i = 0; i < hand.keypoints.length; i++) {
-          let keypoint = hand.keypoints[i];
-          if (hand.handedness == "Left") {
-            fill(255, 0, 255); // Purple for left hand
-          } else {
-            fill(255, 255, 0); // Yellow for right hand
-          }
-          noStroke();
-          circle(keypoint.x, keypoint.y, 16); // Draw circle at each keypoint
+    <script>
+      function applyForOvertime(empCode) {
+        fetch("/apply-overtime", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ emp_code: empCode }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              alert(data.message);
+            } else if (data.error) {
+              alert("Error: " + data.error);
+            }
+          })
+          .catch((error) => {
+            alert("Error applying for overtime: " + error);
+          });
+      }
+    </script>
+
+    <script>
+      let video;
+      let handPose;
+      let hands = [];
+
+      let lastRequestTime = 0; // To store the timestamp of the last request
+      let lastGesture = ""; // To store the last gesture sent
+      let gestureCooldown = false; // To prevent multiple requests for the same gesture
+
+      function setup() {
+        const canvas = createCanvas(640, 480);
+        canvas.parent("canvas-container");
+        video = createCapture(VIDEO);
+        video.size(width, height);
+        video.hide();
+
+        // Initialize handPose and start detecting hands
+        handPose = ml5.handPose(video, modelReady);
+      }
+
+      function modelReady() {
+        console.log("Model Loaded!");
+        detectHands();
+      }
+
+      function detectHands() {
+        handPose.detect(video, gotHands);
+      }
+
+      function gotHands(results) {
+        hands = results;
+        detectHands();
+      }
+
+      function sendGestureToFlask(gesture) {
+        const currentTime = new Date().getTime(); // Get current timestamp
+        const email = new URLSearchParams(window.location.search).get("email");
+
+        // Check if the cooldown is active
+        if (gestureCooldown) {
+          console.log("Cooldown active. Gesture request blocked.");
+          return; // Exit if cooldown is active
         }
 
-        textSize(128);
-        textAlign(CENTER, CENTER);
+        // Check if 3 seconds have passed since the last request
+        if (currentTime - lastRequestTime < 13000) {
+          console.log("Request blocked due to spam prevention.");
+          return; // Exit the function if less than 3 seconds have passed
+        }
 
-        // Check for gestures and send only if the cooldown is inactive
-        if (!gestureCooldown) {
-          if (thumb.y < index.y && lastGesture !== "checkin") {
-            text("👍", index.x, index.y);
-            sendGestureToFlask("checkin"); // Send thumbs up gesture
-          } else if (
-            index.y < middle.y &&
-            index.y < thumb.y &&
-            middle.y < thumb.y &&
-            lastGesture !== "overtime"
-          ) {
-            text("✌️", middle.x, middle.y); // Peace sign
-            sendGestureToFlask("overtime"); // Send overtime gesture
-          } else if (thumb.y > index.y && lastGesture !== "checkout") {
-            text("👎", index.x, index.y);
-            sendGestureToFlask("checkout"); // Send thumbs down gesture
+        // Check if the gesture is different from the last gesture sent
+        if (gesture === lastGesture) {
+          console.log("Gesture has not changed, not sending request.");
+          return; // Exit if the gesture hasn't changed
+        }
+
+        // Set cooldown and update last request values
+        gestureCooldown = true; // Activate cooldown
+        lastRequestTime = currentTime;
+        lastGesture = gesture;
+
+        console.log("Sending gesture:", gesture);
+
+        fetch("/gesture-check", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            gesture: gesture,
+            empcode: email, // Use 'empcode' as the key
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              alert(data.message);
+              location.reload();
+            } else if (data.error) {
+              alert("Error: " + data.error); // Show error message
+            } // Reload the page after sending the gesture
+          })
+          .catch((error) => {
+            alert("Error sending gesture: " + error); // Show error on network failure
+          })
+          .finally(() => {
+            // Reset cooldown after a delay
+            setTimeout(() => {
+              gestureCooldown = false;
+            }, 3000); // Adjust the delay as needed
+          });
+      }
+
+      function draw() {
+        image(video, 0, 0);
+
+        if (hands.length > 0) {
+          let hand = hands[0];
+          let index = hand.index_finger_tip;
+          let middle = hand.middle_finger_tip;
+          let thumb = hand.thumb_tip;
+
+          for (let i = 0; i < hand.keypoints.length; i++) {
+            let keypoint = hand.keypoints[i];
+            if (hand.handedness == "Left") {
+              fill(255, 0, 255); // Purple for left hand
+            } else {
+              fill(255, 255, 0); // Yellow for right hand
+            }
+            noStroke();
+            circle(keypoint.x, keypoint.y, 16); // Draw circle at each keypoint
+          }
+
+          textSize(128);
+          textAlign(CENTER, CENTER);
+
+          // Check for gestures and send only if the cooldown is inactive
+          if (!gestureCooldown) {
+            if (thumb.y < index.y && lastGesture !== "checkin") {
+              text("👍", index.x, index.y);
+              sendGestureToFlask("checkin"); // Send thumbs up gesture
+            } else if (
+              index.y < middle.y &&
+              index.y < thumb.y &&
+              middle.y < thumb.y &&
+              lastGesture !== "overtime"
+            ) {
+              text("✌️", middle.x, middle.y); // Peace sign
+              sendGestureToFlask("overtime"); // Send overtime gesture
+            } else if (thumb.y > index.y && lastGesture !== "checkout") {
+              text("👎", index.x, index.y);
+              sendGestureToFlask("checkout"); // Send thumbs down gesture
+            }
           }
         }
       }
-    }
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>
