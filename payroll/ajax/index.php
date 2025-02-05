@@ -1202,31 +1202,8 @@ function GeneratePaySlip()
 	$deductions_heads = $_POST['deductions_heads'];
 	$deductions_amounts = $_POST['deductions_amounts'];
 
-	$overtime_rate = 75; // Example overtime rate per hour (can be customized)
-
 	if (!empty($emp_code) && !empty($pay_month)) {
 		try {
-			// Query for approved overtime hours
-			$overtimeQuery = "
-				SELECT SUM(overtime_hours) AS total_overtime_hours 
-				FROM " . DB_PREFIX . "overtimes 
-				WHERE emp_code = '$emp_code' 
-				  AND DATE_FORMAT(overtime_date, '%Y-%m') = '$pay_month' 
-				  AND status = 'approved'";
-			$overtimeResult = mysqli_query($db, $overtimeQuery);
-			
-			$overtimeHours = 100;
-			if ($overtimeResult && mysqli_num_rows($overtimeResult) > 0) {
-				$overtimeData = mysqli_fetch_assoc($overtimeResult);
-				$overtimeHours = floatval($overtimeData['total_overtime_hours']);
-			}
-
-			$overtimeEarnings = $overtimeHours * $overtime_rate;
-
-			// Add overtime to earnings
-			$earnings_heads[] = "Overtime Pay";
-			$earnings_amounts[] = $overtimeEarnings;
-
 			// Process earnings
 			for ($i = 0; $i < count($earnings_heads); $i++) {
 				$earnings_head = mysqli_real_escape_string($db, $earnings_heads[$i]);
@@ -1244,7 +1221,7 @@ function GeneratePaySlip()
 				}
 			}
 
-			// Process deductions (no changes needed here)
+			// Process deductions
 			for ($i = 0; $i < count($deductions_heads); $i++) {
 				$deductions_head = mysqli_real_escape_string($db, $deductions_heads[$i]);
 				$deductions_amount = number_format($deductions_amounts[$i], 2, '.', '');

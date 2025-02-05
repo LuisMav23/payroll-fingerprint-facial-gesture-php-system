@@ -135,6 +135,22 @@ if ($checkSalarySQL) {
 															<td colspan="2" style="padding:0">
 																<table class="table table-bordered table-striped"
 																	style="margin:0">
+																	<?php
+																		$dailySalary = GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($empData['emp_code'], $month);
+																		$totalEarnings += $dailySalary; 
+																	?>
+																	<tr>
+																		<td width="70%">
+																			Daily Salary
+																		</td>
+																		<td width="30%" class="text-right">
+																			<input type="hidden" name="earnings_heads[]"
+																				value="Daily Salary" />
+																			<input type="text" name="earnings_amounts[]"
+																				value="<?php echo number_format($dailySalary, 2, '.', ''); ?>"
+																				class="form-control text-right" />
+																		</td>
+																	</tr>
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'earnings') { ?>
 																			<?php $totalEarnings += $head['default_salary']; ?>
@@ -151,6 +167,24 @@ if ($checkSalarySQL) {
 																				</td>
 																			</tr>
 																		<?php } ?>
+																	<?php } ?>
+																	<?php if (CheckOvertimeDataByEmpcode($empData['emp_code'], $month)) { ?>
+																	<?php
+																		$overtimeEarnings = GetOvertimeHoursByEmoCodeAndMonth($empData['emp_code'], $month);
+																		$totalEarnings += $overtimeEarnings; 
+																	?>
+																	<tr>
+																		<td width="70%">
+																			Overtime Pay
+																		</td>
+																		<td width="30%" class="text-right">
+																			<input type="hidden" name="earnings_heads[]"
+																				value="Overtime Pay" />
+																			<input type="text" name="earnings_amounts[]"
+																				value="<?php echo number_format($overtimeEarnings, 2, '.', ''); ?>"
+																				class="form-control text-right" />
+																		</td>
+																	</tr>
 																	<?php } ?>
 																</table>
 															</td>

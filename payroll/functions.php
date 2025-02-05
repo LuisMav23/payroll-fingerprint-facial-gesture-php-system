@@ -188,6 +188,78 @@ function GetEmployeePayheadsByEmpCode($EmpCode)
     return $payData;
 }
 
+function CheckOvertimeDataByEmpcode($EmpCode, $month){
+    global $db;
+    $dateTime = DateTime::createFromFormat('F, Y', $month);
+    if (!$dateTime) {
+        return 0; // Invalid date format, return 0
+    }
+    $formattedMonth = $dateTime->format('Y-m');
+    $overtimeQuery = "SELECT * FROM " . DB_PREFIX . "overtimes WHERE `emp_code` = '$EmpCode'AND DATE_FORMAT(overtime_date, '%Y-%m') = '$formattedMonth' AND status = 'approved'";
+    $query = mysqli_query($db, $overtimeQuery);
+    if ($query) {
+        if (mysqli_num_rows($query) > 0) {
+            return true;
+        }
+    }
+    return false;
+
+
+}
+
+function GetOvertimeHoursByEmoCodeAndMonth($EmpCode, $month){
+    global $db;
+
+    $dateTime = DateTime::createFromFormat('F, Y', $month);
+    if (!$dateTime) {
+        return 0; // Invalid date format, return 0
+    }
+    $formattedMonth = $dateTime->format('Y-m');
+
+    $overtimeQuery = "
+        SELECT SUM(overtime_hours) AS total_overtime_hours 
+        FROM " . DB_PREFIX . "overtimes 
+        WHERE `emp_code` = '$EmpCode' 
+        AND DATE_FORMAT(overtime_date, '%Y-%m') = '$formattedMonth' 
+        AND status = 'approved'";
+    $overtimeResult = mysqli_query($db, $overtimeQuery);
+    $overtimeHours = 0;
+    if ($overtimeResult && mysqli_num_rows($overtimeResult) > 0) {
+        $overtimeData = mysqli_fetch_assoc($overtimeResult);
+        $overtimeHours = floatval($overtimeData['total_overtime_hours'] ?? 0);
+    }
+
+    $overtimeEarnings = $overtimeHours * 75;
+    return $overtimeEarnings;
+    
+}
+
+function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month){
+    global $db;
+
+    $dateTime = DateTime::createFromFormat('F, Y', $month);
+    if (!$dateTime) {
+        return 0; // Invalid date format, return 0
+    }
+    $formattedMonth = $dateTime->format('Y-m');
+
+    $attendanceQuery = "
+        SELECT * FROM " . DB_PREFIX . "attendance
+        WHERE `emp_code` = '$EmpCode' 
+        AND DATE_FORMAT(attendance_date, '%Y-%m') = '$formattedMonth'
+        AND action_name = 'time-in'
+    ";
+
+    $attendanceResult = mysqli_query($db, $attendanceQuery);
+    $totalSalary = 0;
+    if ($attendanceResult && mysqli_num_rows($attendanceResult) > 0) {
+        while ($attendanceData = mysqli_fetch_assoc($attendanceResult)){
+            $totalSalary = $totalSalary + 645;
+        }
+    }
+    return $totalSalary;
+}
+
 function GetEmployeeSalaryByEmpCodeAndMonth($EmpCode, $month)
 {
     global $db;
@@ -282,7 +354,7 @@ function GetEmployeeLWPDataByEmpCodeAndMonth($EmpCode, $month)
     //====================
 
     // Total leaves in a financial year
-    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "holidays` WHERE `holiday_type` = 'compulsory' AND STR_TO_DATE(`holiday_date`, '%m/%d/%Y') BETWEEN '" . $startYear . '-' . $startMonth . '-' . $startDay . "' AND '" . $endYear . '-' . $endMonth . '-' . $endDay . "'");
+    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "holidays` WHERE `holiday_type` = '  lsory' AND STR_TO_DATE(`holiday_date`, '%m/%d/%Y') BETWEEN '" . $startYear . '-' . $startMonth . '-' . $startDay . "' AND '" . $endYear . '-' . $endMonth . '-' . $endDay . "'");
     if ($query) {
         if (mysqli_num_rows($query) > 0) {
             $leaveData['totalLeaves'] = mysqli_num_rows($query) + 7 + 12 + 12 + 6;
