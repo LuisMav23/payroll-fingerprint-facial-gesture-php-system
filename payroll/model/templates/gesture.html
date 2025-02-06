@@ -146,22 +146,6 @@
           <span class="text-orange">{{ attendance_status }}</span>
         </p>
         {% endif %}
-        <button
-          id="applyOvertimeBtn"
-          class="btn btn-primary mt-3"
-          onclick="applyForOvertime('{{ employee.emp_code }}')"
-          {%
-          if
-          attendance_status
-          !="Timed out"
-          %}
-          disabled
-          {%
-          endif
-          %}
-        >
-          Apply for Overtime
-        </button>
         {% else %}
         <p>Employee not found.</p>
         {% endif %}

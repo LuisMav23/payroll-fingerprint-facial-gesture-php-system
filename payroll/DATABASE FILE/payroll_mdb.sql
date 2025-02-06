@@ -231,7 +231,8 @@ CREATE TABLE `wy_salaries` (
   `net_salary` float(11,2) NOT NULL,
   `pay_type` enum('earnings','deductions') NOT NULL,
   `pay_month` varchar(255) NOT NULL,
-  `generate_date` datetime NOT NULL
+  `generate_date` datetime NOT NULL,
+  `cutoff` BOOLEAN NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 CREATE TABLE `wy_overtimes` (

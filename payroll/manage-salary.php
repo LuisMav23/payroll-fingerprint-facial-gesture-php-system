@@ -148,7 +148,7 @@ if ($checkSalarySQL) {
 																<table class="table table-bordered table-striped"
 																	style="margin:0">
 																	<?php
-																		$dailySalary = GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($empData['emp_code'], $month);
+																		$dailySalary = GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
 																		$totalEarnings += $dailySalary; 
 																	?>
 																	<tr>
@@ -180,9 +180,9 @@ if ($checkSalarySQL) {
 																			</tr>
 																		<?php } ?>
 																	<?php } ?>
-																	<?php if (CheckOvertimeDataByEmpcode($empData['emp_code'], $month)) { ?>
+																	<?php if (CheckOvertimeDataByEmpcode($empData['emp_code'], $month, $cutoffFlag)) { ?>
 																	<?php
-																		$overtimeEarnings = GetOvertimeHoursByEmoCodeAndMonth($empData['emp_code'], $month);
+																		$overtimeEarnings = GetOvertimeHoursByEmpCodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
 																		$totalEarnings += $overtimeEarnings; 
 																	?>
 																	<tr>

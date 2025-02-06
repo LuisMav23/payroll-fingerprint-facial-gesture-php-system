@@ -1203,7 +1203,7 @@ function GeneratePaySlip()
 	$deductions_amounts = $_POST['deductions_amounts'];
 	$cutoff = $_POST['cutoff'];
 
-	if (!empty($emp_code) && !empty($pay_month)) {
+	if (!empty($emp_code) && !empty($pay_month) && !empty($cutoff)) {
 		try {
 			// Process earnings
 			for ($i = 0; $i < count($earnings_heads); $i++) {
@@ -1214,7 +1214,7 @@ function GeneratePaySlip()
 				if (!$checkSalSQL) {
 					$errorMessages[] = 'Error checking earnings: ' . mysqli_error($db);
 				} else if (mysqli_num_rows($checkSalSQL) == 0) {
-					$insertEarningsSQL = "INSERT INTO " . DB_PREFIX . "salaries(emp_code, payhead_name, pay_amount, earning_total, deduction_total, net_salary, pay_type, pay_month, generate_date) VALUES ('$emp_code', '$earnings_head', $earnings_amount, " . number_format(array_sum($earnings_amounts), 2, '.', '') . ", " . number_format(array_sum($deductions_amounts), 2, '.', '') . ", " . number_format((array_sum($earnings_amounts) - array_sum($deductions_amounts)), 2, '.', '') . ", 'earnings', '$pay_month', '" . date('Y-m-d H:i:s') . "')";
+					$insertEarningsSQL = "INSERT INTO " . DB_PREFIX . "salaries(emp_code, payhead_name, pay_amount, earning_total, deduction_total, net_salary, pay_type, pay_month, generate_date, cutoff) VALUES ('$emp_code', '$earnings_head', $earnings_amount, " . number_format(array_sum($earnings_amounts), 2, '.', '') . ", " . number_format(array_sum($deductions_amounts), 2, '.', '') . ", " . number_format((array_sum($earnings_amounts) - array_sum($deductions_amounts)), 2, '.', '') . ", 'earnings', '$pay_month', '" . date('Y-m-d H:i:s') . "', ". $cutoff .")";
 
 					if (!mysqli_query($db, $insertEarningsSQL)) {
 						$errorMessages[] = 'Error inserting earnings: ' . mysqli_error($db);
@@ -1231,7 +1231,7 @@ function GeneratePaySlip()
 				if (!$checkSalSQL) {
 					$errorMessages[] = 'Error checking deductions: ' . mysqli_error($db);
 				} else if (mysqli_num_rows($checkSalSQL) == 0) {
-					$insertDeductionsSQL = "INSERT INTO " . DB_PREFIX . "salaries(emp_code, payhead_name, pay_amount, earning_total, deduction_total, net_salary, pay_type, pay_month, generate_date) VALUES ('$emp_code', '$deductions_head', $deductions_amount, " . number_format(array_sum($earnings_amounts), 2, '.', '') . ", " . number_format(array_sum($deductions_amounts), 2, '.', '') . ", " . number_format((array_sum($earnings_amounts) - array_sum($deductions_amounts)), 2, '.', '') . ", 'deductions', '$pay_month', '" . date('Y-m-d H:i:s') . "')";
+					$insertDeductionsSQL = "INSERT INTO " . DB_PREFIX . "salaries(emp_code, payhead_name, pay_amount, earning_total, deduction_total, net_salary, pay_type, pay_month, generate_date, cutoff) VALUES ('$emp_code', '$deductions_head', $deductions_amount, " . number_format(array_sum($earnings_amounts), 2, '.', '') . ", " . number_format(array_sum($deductions_amounts), 2, '.', '') . ", " . number_format((array_sum($earnings_amounts) - array_sum($deductions_amounts)), 2, '.', '') . ", 'deductions', '$pay_month', '" . date('Y-m-d H:i:s') . "', ". $cutoff .")";
 
 					if (!mysqli_query($db, $insertDeductionsSQL)) {
 						$errorMessages[] = 'Error inserting deductions: ' . mysqli_error($db);
@@ -1321,8 +1321,8 @@ function GeneratePaySlip()
 			$html .= '<tr>';
 			$html .= '<td>Date of Joining</td>';
 			$html .= '<td>: ' . date('d-m-Y', strtotime($empData['joining_date'])) . '</td>';
-			$html .= '<td>Payment Type</td>';
-			$html .= '<td>: ' . ucfirst($empSalary['payment_type']) . '</td>';
+			$html .= '<td>Cut Off</td>';
+			$html .= '<td>: ' . ('30th' ? $cutoff: '15th') . '</td>';
 			$html .= '</tr>';
 
 			$html .= '</table>';

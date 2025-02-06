@@ -188,14 +188,27 @@ function GetEmployeePayheadsByEmpCode($EmpCode)
     return $payData;
 }
 
-function CheckOvertimeDataByEmpcode($EmpCode, $month){
+function CheckOvertimeDataByEmpcode($EmpCode, $month, $cutoff){
     global $db;
     $dateTime = DateTime::createFromFormat('F, Y', $month);
     if (!$dateTime) {
-        return 0; // Invalid date format, return 0
+        return false; // Invalid date format, return false
     }
     $formattedMonth = $dateTime->format('Y-m');
-    $overtimeQuery = "SELECT * FROM " . DB_PREFIX . "overtimes WHERE `emp_code` = '$EmpCode'AND DATE_FORMAT(overtime_date, '%Y-%m') = '$formattedMonth' AND status = 'approved'";
+
+    if ($cutoff == 0) {
+        $startDay = 1;
+        $endDay = 15;
+    } else {
+        $startDay = 16;
+        $endDay = cal_days_in_month(CAL_GREGORIAN, $dateTime->format('m'), $dateTime->format('Y'));
+    }
+
+    $overtimeQuery = "
+        SELECT * FROM " . DB_PREFIX . "overtimes 
+        WHERE `emp_code` = '$EmpCode' 
+        AND overtime_date BETWEEN '$formattedMonth-$startDay' AND '$formattedMonth-$endDay' 
+        AND status = 'approved'";
     $query = mysqli_query($db, $overtimeQuery);
     if ($query) {
         if (mysqli_num_rows($query) > 0) {
@@ -203,11 +216,9 @@ function CheckOvertimeDataByEmpcode($EmpCode, $month){
         }
     }
     return false;
-
-
 }
 
-function GetOvertimeHoursByEmoCodeAndMonth($EmpCode, $month){
+function GetOvertimeHoursByEmpCodeAndMonth($EmpCode, $month, $cutoff){
     global $db;
 
     $dateTime = DateTime::createFromFormat('F, Y', $month);
@@ -216,11 +227,19 @@ function GetOvertimeHoursByEmoCodeAndMonth($EmpCode, $month){
     }
     $formattedMonth = $dateTime->format('Y-m');
 
+    if ($cutoff == 0) {
+        $startDay = 1;
+        $endDay = 15;
+    } else {
+        $startDay = 16;
+        $endDay = cal_days_in_month(CAL_GREGORIAN, $dateTime->format('m'), $dateTime->format('Y'));
+    }
+
     $overtimeQuery = "
         SELECT SUM(overtime_hours) AS total_overtime_hours 
         FROM " . DB_PREFIX . "overtimes 
         WHERE `emp_code` = '$EmpCode' 
-        AND DATE_FORMAT(overtime_date, '%Y-%m') = '$formattedMonth' 
+        AND overtime_date BETWEEN '$formattedMonth-$startDay' AND '$formattedMonth-$endDay' 
         AND status = 'approved'";
     $overtimeResult = mysqli_query($db, $overtimeQuery);
     $overtimeHours = 0;
@@ -231,10 +250,9 @@ function GetOvertimeHoursByEmoCodeAndMonth($EmpCode, $month){
 
     $overtimeEarnings = $overtimeHours * 75;
     return $overtimeEarnings;
-    
 }
 
-function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month){
+function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month, $cutoff){
     global $db;
 
     $dateTime = DateTime::createFromFormat('F, Y', $month);
@@ -243,10 +261,18 @@ function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month){
     }
     $formattedMonth = $dateTime->format('Y-m');
 
+    if ($cutoff == 0) {
+        $startDay = 1;
+        $endDay = 15;
+    } else {
+        $startDay = 16;
+        $endDay = cal_days_in_month(CAL_GREGORIAN, $dateTime->format('m'), $dateTime->format('Y'));
+    }
+
     $attendanceQuery = "
         SELECT * FROM " . DB_PREFIX . "attendance
         WHERE `emp_code` = '$EmpCode' 
-        AND DATE_FORMAT(attendance_date, '%Y-%m') = '$formattedMonth'
+        AND attendance_date BETWEEN '$formattedMonth-$startDay' AND '$formattedMonth-$endDay'
         AND action_name = 'time-in'
     ";
 
@@ -254,7 +280,7 @@ function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month){
     $totalSalary = 0;
     if ($attendanceResult && mysqli_num_rows($attendanceResult) > 0) {
         while ($attendanceData = mysqli_fetch_assoc($attendanceResult)){
-            $totalSalary = $totalSalary + 645;
+            $totalSalary += 645;
         }
     }
     return $totalSalary;
