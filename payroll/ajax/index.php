@@ -547,7 +547,10 @@ function LoadingSalaries()
 			$nestedData[] = number_format($row['earning_total'], 2, '.', ',');
 			$nestedData[] = number_format($row['deduction_total'], 2, '.', ',');
 			$nestedData[] = number_format($row['net_salary'], 2, '.', ',');
-			$nestedData[] = '<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $row['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '.pdf\');"><i class="fa fa-download"></i></button>';
+			$nestedData[] = '
+				<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $row['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '-15th.pdf\');"><i class="fa fa-download"></i>15th</button>
+				<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $row['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '-30th.pdf\');"><i class="fa fa-download"></i>30th</button>
+				';
 			// <button type="button" class="btn btn-info btn-xs" onclick="sendPaySlipByMail(\'' . $row['emp_code'] . '\', \'' . $row['pay_month'] . '\');"><i class="fa fa-envelope"></i></button>
 			$data[] = $nestedData;
 			$i++;
@@ -615,7 +618,10 @@ function LoadingSalaries()
 				$nestedData[] = number_format($row['earning_total'], 2, '.', ',');
 				$nestedData[] = number_format($row['deduction_total'], 2, '.', ',');
 				$nestedData[] = number_format($row['net_salary'], 2, '.', ',');
-				$nestedData[] = '<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $empData['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '.pdf\');"><i class="fa fa-download"></i></button>';
+				$nestedData[] = '
+						<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $empData['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '-15th.pdf\');"><i class="fa fa-download"></i></button>
+						<button type="button" class="btn btn-success btn-xs" onclick="openInNewTab(\'' . BASE_URL . 'payslips/' . $empData['emp_code'] . '/' . str_replace(', ', '-', $row['pay_month']) . '/' . str_replace(', ', '-', $row['pay_month']) . '-30th.pdf\');"><i class="fa fa-download"></i></button>
+					';
 
 				$data[] = $nestedData;
 				$i++;
@@ -1203,7 +1209,7 @@ function GeneratePaySlip()
 	$deductions_amounts = $_POST['deductions_amounts'];
 	$cutoff = $_POST['cutoff'];
 
-	if (!empty($emp_code) && !empty($pay_month) && !empty($cutoff)) {
+	if (!empty($emp_code) && !empty($pay_month)) {
 		try {
 			// Process earnings
 			for ($i = 0; $i < count($earnings_heads); $i++) {
@@ -1241,7 +1247,6 @@ function GeneratePaySlip()
 
 			// Retrieve employee data and salary
 			$empData = GetEmployeeDataByEmpCode($emp_code);
-			$empSalary = GetEmployeeSalaryByEmpCodeAndMonth($emp_code, $pay_month);
 			$empLeave = GetEmployeeLWPDataByEmpCodeAndMonth($emp_code, $pay_month);
 
 			// Generate HTML for payslip
@@ -1322,7 +1327,7 @@ function GeneratePaySlip()
 			$html .= '<td>Date of Joining</td>';
 			$html .= '<td>: ' . date('d-m-Y', strtotime($empData['joining_date'])) . '</td>';
 			$html .= '<td>Cut Off</td>';
-			$html .= '<td>: ' . ('30th' ? $cutoff: '15th') . '</td>';
+			$html .= '<td>: ' . ($cutoff == 0 ? '15th' : '30th') . '</td>';
 			$html .= '</tr>';
 
 			$html .= '</table>';
@@ -1379,7 +1384,7 @@ function GeneratePaySlip()
 				mkdir($dirPath, 0777, true);
 			}
 
-			$pdfFilePath = $dirPath . '/' . date('F-Y', strtotime($pay_month)) . '.pdf';
+			$pdfFilePath = $dirPath . '/' . date('F-Y', strtotime($pay_month)) . ($cutoff == 0 ? '-15th' : '-30th') . '.pdf';
 			$mpdf->WriteHTML($html);
 			$mpdf->Output($pdfFilePath, \Mpdf\Output\Destination::FILE);
 

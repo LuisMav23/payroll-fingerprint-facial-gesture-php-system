@@ -286,12 +286,47 @@ function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month, $cu
     return $totalSalary;
 }
 
-function GetEmployeeSalaryByEmpCodeAndMonth($EmpCode, $month)
+function GetEmployeeLateDeductionByEmpcodeAndMonth($EmpCode, $month, $cutoff){
+    global $db;
+
+    $dateTime = DateTime::createFromFormat('F, Y', $month);
+    if (!$dateTime) {
+        return 0; // Invalid date format, return 0
+    }
+    $formattedMonth = $dateTime->format('Y-m');
+
+    if ($cutoff == 0) {
+        $startDay = 1;
+        $endDay = 15;
+    } else {
+        $startDay = 16;
+        $endDay = cal_days_in_month(CAL_GREGORIAN, $dateTime->format('m'), $dateTime->format('Y'));
+    }
+
+    $lateQuery = "
+        SELECT * FROM " . DB_PREFIX . "attendance
+        WHERE `emp_code` = '$EmpCode' 
+        AND attendance_date BETWEEN '$formattedMonth-$startDay' AND '$formattedMonth-$endDay'
+        AND action_name = 'time-in'
+        AND emp_desc = 'Late'
+    ";
+
+    $lateResult = mysqli_query($db, $lateQuery);
+    $totalLateDeduction = 0;
+    if ($lateResult && mysqli_num_rows($lateResult) > 0) {
+        while ($attendanceData = mysqli_fetch_assoc($lateResult)){
+            $totalLateDeduction += 50;
+        }
+    }
+    return $totalLateDeduction;
+}
+
+function GetEmployeeSalaryByEmpCodeAndMonth($EmpCode, $month, $cutoff)
 {
     global $db;
 
     $salaryData = array();
-    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "salaries` WHERE `emp_code` = '$EmpCode' AND `pay_month` = '$month'");
+    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "salaries` WHERE `emp_code` = '$EmpCode' AND `pay_month` = '$month' AND `cutoff` = '$cutoff'");
     if ($query) {
         if (mysqli_num_rows($query) > 0) {
             while ($payData = mysqli_fetch_assoc($query)) {
@@ -325,25 +360,30 @@ function GetEmployeeLWPDataByEmpCodeAndMonth($EmpCode, $month)
     $TotalSundaysAndSaturdays = TotalSundaysAndSaturdays(date('m', strtotime($month)), date('Y', strtotime($month)));
     $leaveData['workingDays'] = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($month)), date('Y', strtotime($month))) - $TotalSundaysAndSaturdays;
 
+    // Initialize arrays to avoid undefined variable warnings
+    $withoutPay = [];
+    $leaves = [];
+
     // Total without leaves in the payment month
-    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '$EmpCode' AND `leave_type` = 'Leave Without Pay' AND `leave_status` = 'approve'");
-    if ($query) {
-        if (mysqli_num_rows($query) > 0) {
-            while ($row = mysqli_fetch_assoc($query)) {
-                if (strpos($row['leave_dates'], ',') !== false) {
-                    $leaveDates = explode(',', $row['leave_dates']);
-                    foreach ($leaveDates as $date) {
-                        $leaveDate = date('F, Y', strtotime($date));
-                        if ($leaveDate == $month) {
-                            $withoutPay[] = 1;
-                        }
+    $query = mysqli_prepare($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = ? AND `leave_type` = 'Leave Without Pay' AND `leave_status` = 'approve'");
+    mysqli_stmt_bind_param($query, 's', $EmpCode);
+    mysqli_stmt_execute($query);
+    $result = mysqli_stmt_get_result($query);
+    
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            if (strpos($row['leave_dates'], ',') !== false) {
+                $leaveDates = explode(',', $row['leave_dates']);
+                foreach ($leaveDates as $date) {
+                    $leaveDate = date('F, Y', strtotime($date));
+                    if ($leaveDate == $month) {
+                        $withoutPay[] = 1;
                     }
                 }
             }
         }
     }
     $leaveData['withoutPay'] = isset($withoutPay) ? array_sum($withoutPay) : 0;
-    //====================
 
     // Total with pay leaves till date
     $nowMonth = date('n');
@@ -359,36 +399,42 @@ function GetEmployeeLWPDataByEmpCodeAndMonth($EmpCode, $month)
     $endMonth = 3;
     $startDay = 1;
     $endDay = 31;
-    $nowDay = date('j');
-    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '$EmpCode' AND `leave_type` != 'Leave Without Pay'");
-    if ($query) {
-        if (mysqli_num_rows($query) > 0) {
-            while ($row = mysqli_fetch_assoc($query)) {
-                if (strpos($row['leave_dates'], ',') !== false) {
-                    $leaveDates = explode(',', $row['leave_dates']);
-                    foreach ($leaveDates as $date) {
-                        $leaveDate = strtotime(date('F, Y', $date));
-                        if ($leaveDate <= strtotime($month)) {
-                            $leaves[] = 1;
-                        }
+
+    $query = mysqli_prepare($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = ? AND `leave_type` != 'Leave Without Pay'");
+    mysqli_stmt_bind_param($query, 's', $EmpCode);
+    mysqli_stmt_execute($query);
+    $result = mysqli_stmt_get_result($query);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            if (strpos($row['leave_dates'], ',') !== false) {
+                $leaveDates = explode(',', $row['leave_dates']);
+                foreach ($leaveDates as $date) {
+                    $leaveDate = strtotime(date('F, Y', strtotime($date)));
+                    if ($leaveDate <= strtotime($month)) {
+                        $leaves[] = 1;
                     }
                 }
             }
         }
     }
     $leaveData['payLeaves'] = isset($leaves) ? array_sum($leaves) : 0;
-    //====================
 
     // Total leaves in a financial year
-    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "holidays` WHERE `holiday_type` = '  lsory' AND STR_TO_DATE(`holiday_date`, '%m/%d/%Y') BETWEEN '" . $startYear . '-' . $startMonth . '-' . $startDay . "' AND '" . $endYear . '-' . $endMonth . '-' . $endDay . "'");
-    if ($query) {
-        if (mysqli_num_rows($query) > 0) {
-            $leaveData['totalLeaves'] = mysqli_num_rows($query) + 7 + 12 + 12 + 6;
-        }
+    $query = mysqli_prepare($db, "SELECT * FROM `" . DB_PREFIX . "holidays` WHERE `holiday_type` = '  lsory' AND STR_TO_DATE(`holiday_date`, '%m/%d/%Y') BETWEEN ? AND ?");
+    $startDate = $startYear . '-' . $startMonth . '-' . $startDay;
+    $endDate = $endYear . '-' . $endMonth . '-' . $endDay;
+    mysqli_stmt_bind_param($query, 'ss', $startDate, $endDate);
+    mysqli_stmt_execute($query);
+    $result = mysqli_stmt_get_result($query);
+
+    if ($result) {
+        $leaveData['totalLeaves'] = mysqli_num_rows($result);
     }
 
     return $leaveData;
 }
+
 function Send_Mail($subject, $message, $toName, $toMail, $fromName = FALSE, $fromMail = FALSE, $cc = FALSE, $bcc = FALSE, $attachment = FALSE, $debug = FALSE)
 {
     include_once(dirname(__FILE__) . "/phpmailer/class.phpmailer.php");

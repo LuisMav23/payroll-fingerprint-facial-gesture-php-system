@@ -28,7 +28,7 @@ if ($checkSalarySQL) {
 
 	if ($checkSalaryROW > 0) {
 		$flag = 1;
-		$empSalary = GetEmployeeSalaryByEmpCodeAndMonth($_GET['emp_code'], $month);
+		$empSalary = GetEmployeeSalaryByEmpCodeAndMonth($_GET['emp_code'], $month, $cutoffFlag);
 	} else {
 		$empHeads = GetEmployeePayheadsByEmpCode($_GET['emp_code']);
 	}
@@ -203,6 +203,22 @@ if ($checkSalarySQL) {
 															<td colspan="2" style="padding:0">
 																<table class="table table-bordered table-striped"
 																	style="margin:0">
+																	<?php
+																		$lateDeduction = GetEmployeeLateDeductionByEmpcodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
+																		$totalDeductions += $lateDeduction; 
+																	?>
+																	<tr>
+																		<td width="70%">
+																			Late Deduction
+																		</td>
+																		<td width="30%" class="text-right">
+																			<input type="hidden" name="deductions_heads[]"
+																				value="Late Deduction" />
+																			<input type="text" name="deductions_amounts[]"
+																				value="<?php echo number_format($lateDeduction, 2, '.', ''); ?>"
+																				class="form-control text-right" />
+																		</td>
+																	</tr>
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'deductions') { ?>
 																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Premium'){ ?>
@@ -236,6 +252,7 @@ if ($checkSalarySQL) {
 																			<?php } ?>
 																		<?php } ?>
 																	<?php } ?>
+																	
 																</table>
 															</td>
 														</tr>
@@ -373,7 +390,7 @@ if ($checkSalarySQL) {
 										</div>
 										<div class="col-sm-6 text-right">
 											<button type="button" class="btn btn-success"
-												onclick="openInNewTab('<?php echo BASE_URL; ?>payslips/<?php echo $empData['emp_code']; ?>/<?php echo str_replace(', ', '-', $month); ?>/<?php echo str_replace(', ', '-', $month); ?>.pdf');">
+												onclick="openInNewTab('<?php echo BASE_URL; ?>payslips/<?php echo $empData['emp_code']; ?>/<?php echo str_replace(', ', '-', $month); ?>/<?php echo str_replace(', ', '-', $month); ?><?php echo ($cutoffFlag == 0 ? '-15th' : '-30th')?>.pdf');">
 												<i class="fa fa-download"></i> Show PaySlip (PDF Version)
 											</button>
 											<!-- <button type="button" class="btn btn-info"
