@@ -1597,44 +1597,60 @@ function LoadingAllLeaves()
 		0 => 'leave_id',
 		1 => 'emp_code',
 		2 => 'leave_subject',
-		3 => 'leave_dates',
-		4 => 'leave_message',
-		5 => 'leave_type',
-		6 => 'leave_status'
+		3 => 'leave_date_start',
+		4 => 'leave_date_end',
+		5 => 'leave_message',
+		6 => 'leave_type',
+		7 => 'leave_status'
 	);
 
-	$sql = "SELECT `leave_id` ";
-	$sql .= " FROM `" . DB_PREFIX . "leaves`";
+	// Get total records count
+	$sql = "SELECT leave_id FROM `" . DB_PREFIX . "leaves`";
 	$query = mysqli_query($db, $sql);
 	$totalData = mysqli_num_rows($query);
 	$totalFiltered = $totalData;
 
-	$sql = "SELECT *";
-	$sql .= " FROM `" . DB_PREFIX . "leaves` WHERE 1=1";
+	// Main Query
+	$sql = "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE 1=1";
+
+	// Search filter
 	if (!empty($requestData['search']['value'])) {
-		$sql .= " AND (`leave_id` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `emp_code` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_subject` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_dates` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_message` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_type` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_status` LIKE '" . $requestData['search']['value'] . "%')";
+		$searchValue = $requestData['search']['value'];
+		$sql .= " AND (leave_id LIKE '%$searchValue%' 
+					OR emp_code LIKE '%$searchValue%' 
+					OR leave_subject LIKE '%$searchValue%' 
+					OR leave_date_start LIKE '%$searchValue%' 
+					OR leave_date_end LIKE '%$searchValue%' 
+					OR leave_message LIKE '%$searchValue%' 
+					OR leave_type LIKE '%$searchValue%' 
+					OR leave_status LIKE '%$searchValue%')";
 	}
+
 	$query = mysqli_query($db, $sql);
 	$totalFiltered = mysqli_num_rows($query);
-	$sql .= " ORDER BY " . $columns[$requestData['order'][0]['column']] . " " . $requestData['order'][0]['dir'] . " LIMIT " . $requestData['start'] . " ," . $requestData['length'] . "";
+
+	// Sorting & Pagination
+	$columnIndex = $requestData['order'][0]['column'];
+	$columnOrder = $requestData['order'][0]['dir'];
+	$start = $requestData['start'];
+	$length = $requestData['length'];
+
+	$sql .= " ORDER BY " . $columns[$columnIndex] . " $columnOrder LIMIT $start, $length";
 	$query = mysqli_query($db, $sql);
 
+	// Fetch data
 	$data = array();
-	$i = 1 + $requestData['start'];
+	$i = 1 + $start;
 	while ($row = mysqli_fetch_assoc($query)) {
 		$nestedData = array();
 		$nestedData[] = $row["leave_id"];
 		$nestedData[] = '<a target="_blank" href="' . REG_URL . 'reports/' . $row["emp_code"] . '/">' . $row["emp_code"] . '</a>';
 		$nestedData[] = $row["leave_subject"];
-		$nestedData[] = $row["leave_dates"];
+		$nestedData[] = $row["leave_date_start"] . " to " . $row["leave_date_end"]; // Display as a range
 		$nestedData[] = $row["leave_message"];
 		$nestedData[] = $row["leave_type"];
+
+		// Status with label formatting
 		if ($row["leave_status"] == 'pending') {
 			$nestedData[] = '<span class="label label-warning">' . ucwords($row["leave_status"]) . '</span>';
 		} elseif ($row['leave_status'] == 'approve') {
@@ -1642,9 +1658,12 @@ function LoadingAllLeaves()
 		} elseif ($row['leave_status'] == 'reject') {
 			$nestedData[] = '<span class="label label-danger">' . ucwords($row["leave_status"]) . 'ed</span>';
 		}
+
 		$data[] = $nestedData;
 		$i++;
 	}
+
+	// JSON response
 	$json_data = array(
 		"draw" => intval($requestData['draw']),
 		"recordsTotal" => intval($totalData),
@@ -1654,6 +1673,7 @@ function LoadingAllLeaves()
 
 	echo json_encode($json_data);
 }
+
 
 function LoadingMyLeaves()
 {
@@ -1663,42 +1683,58 @@ function LoadingMyLeaves()
 	$columns = array(
 		0 => 'leave_id',
 		1 => 'leave_subject',
-		2 => 'leave_dates',
-		3 => 'leave_message',
-		4 => 'leave_type',
-		5 => 'leave_status'
+		2 => 'leave_date_start',
+		3 => 'leave_date_end',
+		4 => 'leave_message',
+		5 => 'leave_type',
+		6 => 'leave_status'
 	);
 
-	$sql = "SELECT `leave_id` ";
-	$sql .= " FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '" . $empData['emp_code'] . "'";
+	// Get total records count for the specific employee
+	$sql = "SELECT leave_id FROM `" . DB_PREFIX . "leaves` WHERE emp_code = '" . $empData['emp_code'] . "'";
 	$query = mysqli_query($db, $sql);
 	$totalData = mysqli_num_rows($query);
 	$totalFiltered = $totalData;
 
-	$sql = "SELECT *";
-	$sql .= " FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '" . $empData['emp_code'] . "'";
+	// Main Query
+	$sql = "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE emp_code = '" . $empData['emp_code'] . "'";
+
+	// Search filter
 	if (!empty($requestData['search']['value'])) {
-		$sql .= " AND (`leave_id` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_subject` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_dates` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_message` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_type` LIKE '" . $requestData['search']['value'] . "%'";
-		$sql .= " OR `leave_status` LIKE '" . $requestData['search']['value'] . "%')";
+		$searchValue = $requestData['search']['value'];
+		$sql .= " AND (leave_id LIKE '%$searchValue%' 
+					OR leave_subject LIKE '%$searchValue%' 
+					OR leave_date_start LIKE '%$searchValue%' 
+					OR leave_date_end LIKE '%$searchValue%' 
+					OR leave_message LIKE '%$searchValue%' 
+					OR leave_type LIKE '%$searchValue%' 
+					OR leave_status LIKE '%$searchValue%')";
 	}
+
 	$query = mysqli_query($db, $sql);
 	$totalFiltered = mysqli_num_rows($query);
-	$sql .= " ORDER BY " . $columns[$requestData['order'][0]['column']] . " " . $requestData['order'][0]['dir'] . " LIMIT " . $requestData['start'] . " ," . $requestData['length'] . "";
+
+	// Sorting & Pagination
+	$columnIndex = $requestData['order'][0]['column'];
+	$columnOrder = $requestData['order'][0]['dir'];
+	$start = $requestData['start'];
+	$length = $requestData['length'];
+
+	$sql .= " ORDER BY " . $columns[$columnIndex] . " $columnOrder LIMIT $start, $length";
 	$query = mysqli_query($db, $sql);
 
+	// Fetch data
 	$data = array();
-	$i = 1 + $requestData['start'];
+	$i = 1 + $start;
 	while ($row = mysqli_fetch_assoc($query)) {
 		$nestedData = array();
 		$nestedData[] = $row["leave_id"];
 		$nestedData[] = $row["leave_subject"];
-		$nestedData[] = $row["leave_dates"];
+		$nestedData[] = $row["leave_date_start"] . " to " . $row["leave_date_end"]; // Display as a range
 		$nestedData[] = $row["leave_message"];
 		$nestedData[] = $row["leave_type"];
+
+		// Status with label formatting
 		if ($row["leave_status"] == 'pending') {
 			$nestedData[] = '<span class="label label-warning">' . ucwords($row["leave_status"]) . '</span>';
 		} elseif ($row['leave_status'] == 'approve') {
@@ -1706,9 +1742,12 @@ function LoadingMyLeaves()
 		} elseif ($row['leave_status'] == 'reject') {
 			$nestedData[] = '<span class="label label-danger">' . ucwords($row["leave_status"]) . 'ed</span>';
 		}
+
 		$data[] = $nestedData;
 		$i++;
 	}
+
+	// JSON response
 	$json_data = array(
 		"draw" => intval($requestData['draw']),
 		"recordsTotal" => intval($totalData),
@@ -1719,85 +1758,58 @@ function LoadingMyLeaves()
 	echo json_encode($json_data);
 }
 
+
 function ApplyLeaveToAdminApproval()
 {
-	$result = array();
-	global $db;
+    $result = array();
+    global $db;
 
-	$adminData = GetAdminData(1);
-	$empData = GetDataByIDAndType($_SESSION['Admin_ID'], $_SESSION['Login_Type']);
+    $adminData = GetAdminData(1);
+    $empData = GetDataByIDAndType($_SESSION['Admin_ID'], $_SESSION['Login_Type']);
 
-	$leave_subject = addslashes($_POST['leave_subject']);
-	$leave_dates = addslashes($_POST['leave_dates']);
-	$leave_message = addslashes($_POST['leave_message']);
-	$leave_type = addslashes($_POST['leave_type']);
-	if (!empty($leave_subject) && !empty($leave_dates) && !empty($leave_message) && !empty($leave_type)) {
-		$AppliedDates = '';
-		if (strpos($leave_dates, ',') !== false) {
-			$dates = explode(',', $leave_dates);
-			foreach ($dates as $date) {
-				$checkLeaveSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `leave_dates` LIKE '%$date%' AND `emp_code` = '" . $empData['emp_code'] . "'");
-				if ($checkLeaveSQL) {
-					if (mysqli_num_rows($checkLeaveSQL) > 0) {
-						$AppliedDates .= $date . ', ';
-					}
-				}
-			}
-		}
-		if (empty($AppliedDates)) {
-			$leaveSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "leaves` (`emp_code`, `leave_subject`, `leave_dates`, `leave_message`, `leave_type`, `apply_date`) VALUES('" . $empData['emp_code'] . "', '$leave_subject', '$leave_dates', '$leave_message', '$leave_type', '" . date('Y-m-d H:i:s') . "')");
-			// if ($leaveSQL) {
-			// 	$empName = $empData['first_name'] . ' ' . $empData['last_name'];
-			// 	$empEmail = $empData['email'];
-			// 	$adminEmail = $adminData['admin_email'];
-			// 	$subject = 'Leave Application: ' . $leave_subject;
-			// 	$message = '<p>Employee: ' . $empName . ' (' . $empData['emp_code'] . ')' . '</p>';
-			// 	$message .= '<p>Leave Message: ' . $leave_message . '</p>';
-			// 	$message .= '<p>Leave Date(s): ' . $leave_dates . '</p>';
-			// 	$message .= '<p>Leave Type: ' . $leave_type . '</p>';
-			// 	$message .= '<hr/>';
-			// 	$message .= '<p>Please click on the buttons below or log into the admin area to get an action:</p>';
-			// 	$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=ApproveLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
-			// 	$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
-			// 	$message .= '<button type="submit" style="background:green; border:1px solid green; color:white; padding:0 5px 3px; cursor:pointer; margin-right:15px;">Approve</button>';
-			// 	$message .= '</form>';
-			// 	$message .= '<form method="post" action="' . BASE_URL . 'ajax/?case=RejectLeaveApplication&id=' . mysqli_insert_id() . '" style="display:inline;">';
-			// 	$message .= '<input type="hidden" name="id" value="' . mysqli_insert_id() . '" />';
-			// 	$message .= '<button type="submit" style="background:red; border:1px solid red; color:white; padding:0 5px 3px; cursor:pointer;">Reject</button>';
-			// 	$message .= '</form>';
-			// 	$message .= '<p style="font-size:85%;">After clicking the button, please click on OK and then Continue to make your action complete.</p>';
-			// 	$message .= '<hr/>';
-			// 	$message .= '<p>Thank You<br/>' . $empName . '</p>';
-			// 	$adminName = $adminData['admin_name'];
-			// 	$send = Send_Mail($subject, $message, $adminName, $adminEmail, $empName, $empEmail);
-			// 	if ($send == 0) {
-			// 		$result['code'] = 0;
-			// 		$result['result'] = 'Leave Application has been successfully send to your employer through mail.';
-			// 	} else {
-			// 		$result['code'] = 1;
-			// 		$result['result'] = 'Notice: Leave Application not send through E-Mail, please try again.';
-			// 	}
+    $leave_subject = addslashes($_POST['leave_subject']);
+    $leave_date_start = date('Y-m-d', strtotime(addslashes($_POST['leave_date_start'])));
+	$leave_date_end = date('Y-m-d', strtotime(addslashes($_POST['leave_date_end'])));
 
+    $leave_message = addslashes($_POST['leave_message']);
+    $leave_type = addslashes($_POST['leave_type']);
 
-			// } else {
-			// 	$result['code'] = 1;
-			// 	$result['result'] = 'Something went wrong, please try again.';
-			// }
+    if (!empty($leave_subject) && !empty($leave_date_start) && !empty($leave_date_end) && !empty($leave_message) && !empty($leave_type)) {
+        // Check if the end date is before the start date
+        if (strtotime($leave_date_end) < strtotime($leave_date_start)) {
+            $result['code'] = 4;
+            $result['result'] = 'End date cannot be before start date.';
+        } else {
+            // Check if leave range already exists for the employee
+            $checkLeaveSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '" . $empData['emp_code'] . "' AND (
+                (`leave_date_start` <= '$leave_date_end' AND `leave_date_end` >= '$leave_date_start')
+            )");
+            
+            if (mysqli_num_rows($checkLeaveSQL) > 0) {
+                $result['code'] = 2;
+                $result['result'] = 'You have already applied for leave within this date range. Please choose different dates.';
+            } else {
+                // Insert the leave request into the database
+                $leaveSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "leaves` (`emp_code`, `leave_subject`, `leave_date_start`, `leave_date_end`, `leave_message`, `leave_type`, `apply_date`) 
+                    VALUES ('" . $empData['emp_code'] . "', '$leave_subject', '$leave_date_start', '$leave_date_end', '$leave_message', '$leave_type', '" . date('Y-m-d H:i:s') . "')");
+                
+                if ($leaveSQL) {
+                    $result['code'] = 0;
+                    $result['result'] = 'Leave application was successfully submitted.';
+                } else {
+                    $result['code'] = 1;
+                    $result['result'] = 'Something went wrong, please try again.';
+                }
+            }
+        }
+    } else {
+        $result['code'] = 3;
+        $result['result'] = 'All fields are mandatory.';
+    }
 
-			$result['code'] = 0;
-			$result['result'] = 'Leave application was succesfully submitted.';
-		} else {
-			$alreadyDates = substr($AppliedDates, 0, -2);
-			$result['code'] = 2;
-			$result['result'] = 'You have already applied for leave on ' . $alreadyDates . '. Please change the leave dates.';
-		}
-	} else {
-		$result['code'] = 3;
-		$result['result'] = 'All fields are mandatory.';
-	}
-
-	echo json_encode($result);
+    echo json_encode($result);
 }
+
 
 function ApproveLeaveApplication()
 {

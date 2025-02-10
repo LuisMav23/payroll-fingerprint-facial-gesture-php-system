@@ -83,12 +83,14 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 												required />
 										</div>
 										<div class="form-group">
-											<label for="leave_dates">Leave Dates (MM/DD/YYYY)</label>
-											<input type="text" class="form-control multidatepicker" name="leave_dates"
-												id="leave_dates" required />
-											<small class="text-muted">You can select multiple dates separated by
-												comma.</small>
-										</div>
+												<label for="leave_date_start">Leave Date Start (MM/DD/YYYY)</label>
+												<input type="text" class="form-control datepicker" name="leave_date_start" id="leave_date_start" required />
+											</div>
+											<div class="form-group">
+												<label for="leave_date_end">Leave Date End (MM/DD/YYYY)</label>
+												<input type="text" class="form-control datepicker" name="leave_date_end" id="leave_date_end" required />
+											</div>
+
 										<div class="form-group">
 											<label for="leave_message">Leave Message</label>
 											<textarea class="form-control" name="leave_message" id="leave_message" rows="10"
