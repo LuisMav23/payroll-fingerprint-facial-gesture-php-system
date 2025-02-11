@@ -149,15 +149,17 @@ INSERT INTO `wy_holidays` (`holiday_id`, `holiday_title`, `holiday_desc`, `holid
 --
 
 CREATE TABLE `wy_leaves` (
-  `leave_id` int(11) NOT NULL,
-  `emp_code` varchar(255) NOT NULL,
-  `leave_subject` varchar(255) NOT NULL,
-  `leave_dates` varchar(255) NOT NULL,
-  `leave_message` longtext NOT NULL,
-  `leave_type` varchar(255) NOT NULL,
-  `leave_status` enum('pending','approve','reject') NOT NULL DEFAULT 'pending',
-  `apply_date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+    `leave_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `emp_code` VARCHAR(50) NOT NULL,
+    `leave_subject` VARCHAR(255) NOT NULL,
+    `leave_date_start` DATE NOT NULL,
+    `leave_date_end` DATE NOT NULL,
+    `leave_message` TEXT NOT NULL,
+    `leave_type` VARCHAR(100) NOT NULL,
+    `leave_status` ENUM('approve', 'reject', 'pending') DEFAULT 'pending',
+    `apply_date` DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+NGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `wy_leaves`

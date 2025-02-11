@@ -334,13 +334,13 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<input type="text" class="form-control" name="department" id="department"
 											required />
 									</div>
-									<div class="col-sm-4">
+									<!-- <div class="col-sm-4">
 										<label for="pan_no">PAN No.</label>
 										<input type="text" class="form-control" name="pan_no" id="pan_no" required />
-									</div>
+									</div> -->
 								</div>
 							</div>
-							<div class="form-group">
+							<!-- <div class="form-group">
 								<div class="row">
 									<div class="col-sm-4">
 										<label for="bank_name">Bank Name</label>
@@ -367,7 +367,7 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 											required />
 									</div>
 								</div>
-							</div>
+							</div> -->
 						</div>
 						<div class="modal-footer">
 							<button type="submit" name="submit" class="btn btn-primary">Update Employee</button>

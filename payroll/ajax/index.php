@@ -1173,13 +1173,13 @@ function EditEmployeeDetailsByID()
 	$blood_group = stripslashes($_POST['blood_group']);
 	$designation = stripslashes($_POST['designation']);
 	$department = stripslashes($_POST['department']);
-	$pan_no = stripslashes($_POST['pan_no']);
-	$bank_name = stripslashes($_POST['bank_name']);
-	$account_no = stripslashes($_POST['account_no']);
-	$ifsc_code = stripslashes($_POST['ifsc_code']);
-	$pf_account = stripslashes($_POST['pf_account']);
-	if (!empty($first_name) && !empty($last_name) && !empty($dob) && !empty($gender) && !empty($merital_status) && !empty($nationality) && !empty($address) && !empty($city) && !empty($state) && !empty($country) && !empty($email) && !empty($mobile) && !empty($identity_doc) && !empty($identity_no) && !empty($emp_type) && !empty($joining_date) && !empty($blood_group) && !empty($designation) && !empty($department) && !empty($pan_no) && !empty($bank_name) && !empty($account_no) && !empty($ifsc_code) && !empty($pf_account)) {
-		$updateEmp = mysqli_query($db, "UPDATE `" . DB_PREFIX . "employees` SET `first_name` = '$first_name', `last_name` = '$last_name', `dob` = '$dob', `gender` = '$gender', `merital_status` = '$merital_status', `nationality` = '$nationality', `address` = '$address', `city` = '$city', `state` = '$state', `country` = '$country', `email` = '$email', `mobile` = '$mobile', `telephone` = '$telephone', `identity_doc` = '$identity_doc', `identity_no` = '$identity_no', `emp_type` = '$emp_type', `joining_date` = '$joining_date', `blood_group` = '$blood_group', `designation` = '$designation', `department` = '$department', `pan_no` = '$pan_no', `bank_name` = '$bank_name', `account_no` = '$account_no', `ifsc_code` = '$ifsc_code', `pf_account` = '$pf_account' WHERE `emp_id` = $emp_id");
+	// $pan_no = stripslashes($_POST['pan_no']);
+	// $bank_name = stripslashes($_POST['bank_name']);
+	// $account_no = stripslashes($_POST['account_no']);
+	// $ifsc_code = stripslashes($_POST['ifsc_code']);
+	// $pf_account = stripslashes($_POST['pf_account']);
+	if (!empty($first_name) && !empty($last_name) && !empty($dob) && !empty($gender) && !empty($merital_status) && !empty($nationality) && !empty($address) && !empty($city) && !empty($state) && !empty($country) && !empty($email) && !empty($mobile) && !empty($identity_doc) && !empty($identity_no) && !empty($emp_type) && !empty($joining_date) && !empty($blood_group) && !empty($designation) && !empty($department)) {
+		$updateEmp = mysqli_query($db, "UPDATE `" . DB_PREFIX . "employees` SET `first_name` = '$first_name', `last_name` = '$last_name', `dob` = '$dob', `gender` = '$gender', `merital_status` = '$merital_status', `nationality` = '$nationality', `address` = '$address', `city` = '$city', `state` = '$state', `country` = '$country', `email` = '$email', `mobile` = '$mobile', `telephone` = '$telephone', `identity_doc` = '$identity_doc', `identity_no` = '$identity_no', `emp_type` = '$emp_type', `joining_date` = '$joining_date', `blood_group` = '$blood_group', `designation` = '$designation', `department` = '$department' WHERE `emp_id` = $emp_id");
 		if ($updateEmp) {
 			$result['result'] = 'Employee details has been successfully updated.';
 			$result['code'] = 0;
