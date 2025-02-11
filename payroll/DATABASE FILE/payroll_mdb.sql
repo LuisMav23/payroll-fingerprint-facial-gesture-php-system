@@ -149,7 +149,7 @@ INSERT INTO `wy_holidays` (`holiday_id`, `holiday_title`, `holiday_desc`, `holid
 --
 
 CREATE TABLE `wy_leaves` (
-    `leave_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `leave_id` int(11) NOT NULL,
     `emp_code` VARCHAR(50) NOT NULL,
     `leave_subject` VARCHAR(255) NOT NULL,
     `leave_date_start` DATE NOT NULL,
@@ -158,17 +158,16 @@ CREATE TABLE `wy_leaves` (
     `leave_type` VARCHAR(100) NOT NULL,
     `leave_status` ENUM('approve', 'reject', 'pending') DEFAULT 'pending',
     `apply_date` DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-NGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `wy_leaves`
 --
 
-INSERT INTO `wy_leaves` (`leave_id`, `emp_code`, `leave_subject`, `leave_dates`, `leave_message`, `leave_type`, `leave_status`, `apply_date`) VALUES
-(1, 'WY01', 'Requesting for leave days', '04/13/2021', 'this is a demo leave message', 'Sick Leave', 'approve', '2021-04-13 10:09:02'),
-(3, 'WY03', 'Leave for 2 days', '04/15/2021,04/17/2021', 'Dear admin, i\'d like to apply leave for 2 days as i\'ve been a regular employee since my first day at office. And now, i finally got to rest and spend some time with my family too!', 'Casual Leave', 'reject', '2021-04-14 15:47:06'),
-(4, 'WY05', 'Leave for a week', '04/15/2021,04/23/2021', 'i wont be able to join office as i\'ve been suffering from a rough common cold and fever. so, i\'d like to request a leave for week', 'Sick Leave', 'approve', '2021-04-14 19:15:11');
+-- INSERT INTO `wy_leaves` (`leave_id`, `emp_code`, `leave_subject`, `leave_dates`, `leave_message`, `leave_type`, `leave_status`, `apply_date`) VALUES
+-- (1, 'WY01', 'Requesting for leave days', '04/13/2021', 'this is a demo leave message', 'Sick Leave', 'approve', '2021-04-13 10:09:02'),
+-- (3, 'WY03', 'Leave for 2 days', '04/15/2021,04/17/2021', 'Dear admin, i\'d like to apply leave for 2 days as i\'ve been a regular employee since my first day at office. And now, i finally got to rest and spend some time with my family too!', 'Casual Leave', 'reject', '2021-04-14 15:47:06'),
+-- (4, 'WY05', 'Leave for a week', '04/15/2021,04/23/2021', 'i wont be able to join office as i\'ve been suffering from a rough common cold and fever. so, i\'d like to request a leave for week', 'Sick Leave', 'approve', '2021-04-14 19:15:11');
 
 -- --------------------------------------------------------
 
