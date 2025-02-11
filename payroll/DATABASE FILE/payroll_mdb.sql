@@ -112,7 +112,6 @@ CREATE TABLE `wy_employees` (
 --
 
 INSERT INTO `wy_employees` (`emp_id`, `emp_code`, `emp_password`, `first_name`, `last_name`, `dob`, `gender`, `merital_status`, `nationality`, `address`, `city`, `state`, `country`, `email`, `mobile`, `telephone`, `identity_doc`, `identity_no`, `emp_type`, `joining_date`, `blood_group`, `photo`, `designation`, `department`, `pan_no`, `bank_name`, `account_no`, `ifsc_code`, `pf_account`, `created`) VALUES
-(6, 'WY01', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Will', 'Williams', '04/01/1995', 'male', 'Single', 'American', '2424  Boggess Street', 'Dallas', 'TX', 'US', 'seancvpugosa@gmail.com', '2457878540', '014577854', 'Passport', '012345678', 'Permanent position', '01/29/2019', 'B+', 'WY01.jpg', 'Collectors', 'WEB', '14785424', 'Demo Bank', '012457854512', '12458', '11452', '2021-04-12 13:54:49'),
 (7, 'WY02', '12dea96fec20593566ab75692c9949596833adc9', 'Leo', 'Allen', '04/01/1993', 'male', 'Registered partnership', 'American', '4265  Jefferson Street', 'Norfolk', 'VA', 'US', 'leoallen06905@gmail.com', '2450157695', '1245785540', 'Passport', '914575421', 'Permanent position', '04/01/2020', 'AB+', 'WY02.jpg', 'Chief Marketing Officer', 'Marketing', '2014578540', 'Grand Summit Bank Inc.', '69529712540', 'GRSB0069961', 'GB LAD 054110 000 000542', '2021-04-14 13:18:32');
 
 -- --------------------------------------------------------
