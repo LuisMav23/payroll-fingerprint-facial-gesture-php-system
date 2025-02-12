@@ -1601,7 +1601,8 @@ function LoadingAllLeaves()
 		4 => 'leave_date_end',
 		5 => 'leave_message',
 		6 => 'leave_type',
-		7 => 'leave_status'
+		7 => 'leave_attachment',
+		8 => 'leave_status'
 	);
 
 	// Get total records count
@@ -1649,6 +1650,11 @@ function LoadingAllLeaves()
 		$nestedData[] = $row["leave_date_start"] . " to " . $row["leave_date_end"]; // Display as a range
 		$nestedData[] = $row["leave_message"];
 		$nestedData[] = $row["leave_type"];
+		if ($row["leave_attachment"] == '') {
+			$nestedData[] = 'No attachment';
+		} else {
+			$nestedData[] = '<a target="_blank" href="' . BASE_URL . $row["leave_attachment"] . '">view attachment</a>';
+		}
 
 		// Status with label formatting
 		if ($row["leave_status"] == 'pending') {
@@ -1687,7 +1693,8 @@ function LoadingMyLeaves()
 		3 => 'leave_date_end',
 		4 => 'leave_message',
 		5 => 'leave_type',
-		6 => 'leave_status'
+		6 => 'leave_attachment',
+		7 => 'leave_status'
 	);
 
 	// Get total records count for the specific employee
@@ -1733,6 +1740,11 @@ function LoadingMyLeaves()
 		$nestedData[] = $row["leave_date_start"] . " to " . $row["leave_date_end"]; // Display as a range
 		$nestedData[] = $row["leave_message"];
 		$nestedData[] = $row["leave_type"];
+		if ($row["leave_attachment"] == '') {
+			$nestedData[] = 'No attachment';
+		} else {
+			$nestedData[] = '<a target="_blank" href="' . BASE_URL . $row["leave_attachment"] . '">view attachment</a>';
+		}
 
 		// Status with label formatting
 		if ($row["leave_status"] == 'pending') {
@@ -1769,30 +1781,69 @@ function ApplyLeaveToAdminApproval()
 
     $leave_subject = addslashes($_POST['leave_subject']);
     $leave_date_start = date('Y-m-d', strtotime(addslashes($_POST['leave_date_start'])));
-	$leave_date_end = date('Y-m-d', strtotime(addslashes($_POST['leave_date_end'])));
-
+    $leave_date_end = date('Y-m-d', strtotime(addslashes($_POST['leave_date_end'])));
     $leave_message = addslashes($_POST['leave_message']);
     $leave_type = addslashes($_POST['leave_type']);
+    $leave_attachment = '';
 
-    if (!empty($leave_subject) && !empty($leave_date_start) && !empty($leave_date_end) && !empty($leave_message) && !empty($leave_type)) {
-        // Check if the end date is before the start date
+    // File upload handling
+    if (isset($_FILES['leave_attachment']) && $_FILES['leave_attachment']['error'] == 0) {
+        $allowed_extensions = array("pdf", "doc", "docx", "jpg", "png");
+        $file_name = $_FILES['leave_attachment']['name'];
+        $file_tmp = $_FILES['leave_attachment']['tmp_name'];
+        $file_size = $_FILES['leave_attachment']['size'];
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        if (!in_array($file_ext, $allowed_extensions)) {
+            $result['code'] = 5;
+            $result['result'] = "Invalid file type. Only PDF, DOC, DOCX, JPG, and PNG are allowed.";
+            echo json_encode($result);
+            return;
+        }
+
+        if ($file_size > 5 * 1024 * 1024) { // Limit file size to 5MB
+            $result['code'] = 6;
+            $result['result'] = "File size exceeds the 5MB limit.";
+            echo json_encode($result);
+            return;
+        }
+
+        // Generate a unique file name
+        $new_file_name = time() . "_" . preg_replace("/[^a-zA-Z0-9.]/", "_", $file_name);
+        $upload_dir = __DIR__ . "/uploads/";
+        
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true); // Create uploads directory if it doesn't exist
+        }
+
+        $file_path = $upload_dir . $new_file_name;
+
+        if (move_uploaded_file($file_tmp, $file_path)) {
+            $leave_attachment = $new_file_name; // Save only the filename in the database
+        } else {
+            $result['code'] = 7;
+            $result['result'] = "Failed to upload file.";
+            echo json_encode($result);
+            return;
+        }
+    }
+
+    if (!empty($leave_subject) && !empty($leave_date_start) && !empty($leave_date_end) && !empty($leave_message) && !empty($leave_type)) {		
         if (strtotime($leave_date_end) < strtotime($leave_date_start)) {
             $result['code'] = 4;
             $result['result'] = 'End date cannot be before start date.';
         } else {
-            // Check if leave range already exists for the employee
             $checkLeaveSQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '" . $empData['emp_code'] . "' AND (
                 (`leave_date_start` <= '$leave_date_end' AND `leave_date_end` >= '$leave_date_start')
             )");
-            
+
             if (mysqli_num_rows($checkLeaveSQL) > 0) {
                 $result['code'] = 2;
                 $result['result'] = 'You have already applied for leave within this date range. Please choose different dates.';
             } else {
-                // Insert the leave request into the database
-                $leaveSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "leaves` (`emp_code`, `leave_subject`, `leave_date_start`, `leave_date_end`, `leave_message`, `leave_type`, `apply_date`) 
-                    VALUES ('" . $empData['emp_code'] . "', '$leave_subject', '$leave_date_start', '$leave_date_end', '$leave_message', '$leave_type', '" . date('Y-m-d H:i:s') . "')");
-                
+                $leaveSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "leaves` (`emp_code`, `leave_subject`, `leave_date_start`, `leave_date_end`, `leave_message`, `leave_type`, `leave_attachment`, `apply_date`) 
+                    VALUES ('" . $empData['emp_code'] . "', '$leave_subject', '$leave_date_start', '$leave_date_end', '$leave_message', '$leave_type', '$leave_attachment', '" . date('Y-m-d H:i:s') . "')");
+
                 if ($leaveSQL) {
                     $result['code'] = 0;
                     $result['result'] = 'Leave application was successfully submitted.';

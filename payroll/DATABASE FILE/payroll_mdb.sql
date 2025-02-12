@@ -155,6 +155,7 @@ CREATE TABLE `wy_leaves` (
     `leave_date_end` DATE NOT NULL,
     `leave_message` TEXT NOT NULL,
     `leave_type` VARCHAR(100) NOT NULL,
+    `leave_attachment` VARCHAR(255) NULL,
     `leave_status` ENUM('approve', 'reject', 'pending') DEFAULT 'pending',
     `apply_date` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

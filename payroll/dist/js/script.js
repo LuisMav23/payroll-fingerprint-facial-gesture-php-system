@@ -1308,58 +1308,58 @@ $(document).ready(function () {
   /* End of Script */
 
   /* Leave Apply Form Submit Script Start */
-  if ($('#leave-form').length > 0) {
-    $('#leave-form').on('submit', function (e) {
-      e.preventDefault()
+  // if ($('#leave-form').length > 0) {
+  //   $('#leave-form').on('submit', function (e) {
+  //     e.preventDefault()
 
-      var form = $(this)
-      $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        async: true,
-        cache: false,
-        url: baseurl + 'ajax/?case=ApplyLeaveToAdminApproval',
-        data: form.serialize(),
-        success: function (result) {
-          if (result.code == 0) {
-            form[0].reset()
-            $.notify(
-              {
-                icon: 'glyphicon glyphicon-ok-circle',
-                message: result.result
-              },
-              {
-                allow_dismiss: false,
-                type: 'success',
-                placement: {
-                  from: 'top',
-                  align: 'right'
-                },
-                z_index: 9999
-              }
-            )
-            myleave.ajax.reload(null, false)
-          } else {
-            $.notify(
-              {
-                icon: 'glyphicon glyphicon-remove-circle',
-                message: result.result
-              },
-              {
-                allow_dismiss: false,
-                type: 'danger',
-                placement: {
-                  from: 'top',
-                  align: 'right'
-                },
-                z_index: 9999
-              }
-            )
-          }
-        }
-      })
-    })
-  }
+  //     var form = $(this)
+  //     $.ajax({
+  //       type: 'POST',
+  //       dataType: 'json',
+  //       async: true,
+  //       cache: false,
+  //       url: baseurl + 'ajax/?case=ApplyLeaveToAdminApproval',
+  //       data: form.serialize(),
+  //       success: function (result) {
+  //         if (result.code == 0) {
+  //           form[0].reset()
+  //           $.notify(
+  //             {
+  //               icon: 'glyphicon glyphicon-ok-circle',
+  //               message: result.result
+  //             },
+  //             {
+  //               allow_dismiss: false,
+  //               type: 'success',
+  //               placement: {
+  //                 from: 'top',
+  //                 align: 'right'
+  //               },
+  //               z_index: 9999
+  //             }
+  //           )
+  //           myleave.ajax.reload(null, false)
+  //         } else {
+  //           $.notify(
+  //             {
+  //               icon: 'glyphicon glyphicon-remove-circle',
+  //               message: result.result
+  //             },
+  //             {
+  //               allow_dismiss: false,
+  //               type: 'danger',
+  //               placement: {
+  //                 from: 'top',
+  //                 align: 'right'
+  //               },
+  //               z_index: 9999
+  //             }
+  //           )
+  //         }
+  //       }
+  //     })
+  //   })
+  // }
   /* End of Script */
 })
 
