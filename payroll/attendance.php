@@ -147,6 +147,7 @@ if (!isset($_SESSION['Admin_ID'])) {
 	</div>
 	<footer class="main-footer">
 		<strong> &copy; <?php echo date("Y"); ?> Employee Management System </strong>
+		</footer>
 	</footer>
 	<script src="<?php echo BASE_URL; ?>plugins/jQuery/jquery-2.2.3.min.js"></script>
 	<script src="<?php echo BASE_URL; ?>bootstrap/js/bootstrap.min.js"></script>
@@ -155,6 +156,7 @@ if (!isset($_SESSION['Admin_ID'])) {
 	<script src="<?php echo BASE_URL; ?>plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
 	<script src="<?php echo BASE_URL; ?>dist/js/app.min.js"></script>
 	<script type="text/javascript">var baseurl = '<?php echo BASE_URL; ?>';</script>
+
 
 
 	<script>
@@ -266,8 +268,6 @@ if (!isset($_SESSION['Admin_ID'])) {
         });
     });
 });
-
-
 	</script>
 </body>
 

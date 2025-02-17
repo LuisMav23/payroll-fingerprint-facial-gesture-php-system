@@ -118,7 +118,8 @@ if (isset($_POST['submit'])) {
             $errors['photo'] = '<span class="text-danger">Photo is not uploaded, please try again!</span>';
         }
     }
-} ?>
+} 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -284,10 +285,10 @@ if (isset($_POST['submit'])) {
                         <div class="col-sm-10">
                             <select class="form-control" id="identification" name="identification" required>
                                 <option value="">Please make a choice</option>
-                                <option <?php echo $_POST['identification'] == 'Voter Id' ? 'selected' : ''; ?>
-                                    value="Voter Id">Voter Id</option>
-                                <option <?php echo $_POST['identification'] == 'Aadhar Card' ? 'selected' : ''; ?>
-                                    value="Aadhar Card">Aadhar Card</option>
+                                <option <?php echo $_POST['identification'] == 'Voter ID' ? 'selected' : ''; ?>
+                                    value="Voter ID">Voter ID</option>
+                                <option <?php echo $_POST['identification'] == 'National ID Card' ? 'selected' : ''; ?>
+                                    value="National ID Card">National ID Card</option>
                                 <option <?php echo $_POST['identification'] == 'Driving License' ? 'selected' : ''; ?>
                                     value="Driving License">Driving License</option>
                                 <option <?php echo $_POST['identification'] == 'Passport' ? 'selected' : ''; ?>
@@ -305,14 +306,14 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
                     <hr />
-                    <div class="form-group">
-                        <label for="bloodgrp" class="col-sm-2 control-label">Designation</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="bloodgrp" name="designation"
-                                placeholder="Designation" value="<?php echo $_POST['designation']; ?>" required />
-                            <?php echo $errors['designation']; ?>
+                        <div class="form-group">
+                            <label for="bloodgrp" class="col-sm-2 control-label">Designation</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="bloodgrp" name="designation"
+                                    placeholder="Designation" value="<?php echo $_POST['designation']; ?>" required />
+                                <?php echo $errors['designation']; ?>
+                            </div>
                         </div>
-                    </div>
                     <div class="form-group">
                         <label for="employment_type" class="col-sm-2 control-label">Employee Type</label>
                         <div class="col-sm-10">
@@ -371,8 +372,8 @@ if (isset($_POST['submit'])) {
                 <div class="box-footer">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary" name="submit">Submit</button>
-                    </div>
                 </div>
+                <br><br>
             </form>
         </div>
     </div>
@@ -383,6 +384,7 @@ if (isset($_POST['submit'])) {
     <script type="text/javascript">
         $('#dob, #joining_date').datepicker();
     </script>
+
 </body>
 
 </html>

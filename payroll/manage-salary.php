@@ -101,25 +101,25 @@ if ($checkSalarySQL) {
 												<tr>
 													<td>Designation</td>
 													<td><?php echo ucwords($empData['designation']); ?></td>
-													<td>IFSC Code</td>
-													<td><?php echo strtoupper($empData['ifsc_code']); ?></td>
+													<td>IFSC Code 
+													<td><?php echo strtoupper($empData['ifsc_code']); ?></td> -->
 												</tr>
 												<tr>
 													<td>Gender</td>
 													<td><?php echo ucwords($empData['gender']); ?></td>
-													<td>PAN</td>
-													<td><?php echo strtoupper($empData['pan_no']); ?></td>
+													<td>PAN
+													<td><?php echo strtoupper($empData['pan_no']); ?></td> -->
 												</tr>
 												<tr>
 													<td>Location</td>
 													<td><?php echo ucwords($empData['city']); ?></td>
-													<td>PF Account</td>
-													<td><?php echo strtoupper($empData['pf_account']); ?></td>
+													<td>PF Account
+													<td><?php echo strtoupper($empData['pf_account']); ?></td> -->
 												</tr>
 												<tr>
 													<td>Department</td>
 													<td><?php echo ucwords($empData['department']); ?></td>
-													<td>Payable/Working Days</td>
+													<td>Payable/Working Days
 													<td><?php echo ($empLeave['workingDays'] - $empLeave['withoutPay']); ?>/<?php echo $empLeave['workingDays']; ?>
 														Days</td>
 												</tr>

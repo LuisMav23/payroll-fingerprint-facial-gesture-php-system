@@ -1,7 +1,8 @@
 <?php require_once(dirname(__FILE__) . '/config.php');
 if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 	header('location:' . BASE_URL);
-} ?>
+}
+?>
 
 <!DOCTYPE html>
 <html>
@@ -291,7 +292,7 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<select class="form-control" name="identity_doc" id="identity_doc" required>
 											<option value="">Please make a choice</option>
 											<option value="Voter Id">Voter Id</option>
-											<option value="Aadhar Card">Aadhar Card</option>
+											<option value="Aadhar Card">National ID Card</option>
 											<option value="Driving License">Driving License</option>
 											<option value="Passport">Passport</option>
 										</select>
@@ -322,18 +323,59 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<div class="row">
-									<div class="col-sm-4">
-										<label for="designation">Designation</label>
-										<input type="text" class="form-control" name="designation" id="designation"
-											required />
-									</div>
-									<div class="col-sm-4">
+								<div class="form-group">
+									<!-- <div class="col-sm-4">
 										<label for="department">Department</label>
 										<input type="text" class="form-control" name="department" id="department"
-											required />
-									</div>
+											 /> -->
+											 <!-- Added Code - Andrie -->
+								<div class="form-group">
+										<label for="department" class="col-sm-4">Department</label>
+											<div class="col-sm-6">
+												<select class="form-control" id="department" name="department" required />
+													<option value="">Please make a choice</option>
+													<option <?php echo $_POST['department'] == 'Corporate' ? 'selected' : ''; ?>
+														value="Corporate">Corporate</option>
+													<option <?php echo $_POST['department'] == 'Information Technology' ? 'selected' : ''; ?>
+														value="Information Technology">Information Technology</option>
+													<option <?php echo $_POST['department'] == 'Collector' ? 'selected' : ''; ?>
+														value="Collector">Collector</option>
+													<option <?php echo $_POST['department'] == 'Human Resource' ? 'selected' : ''; ?>
+														value="Human Resource">Human Resource</option>
+													<option <?php echo $_POST['department'] == 'Marketing' ? 'selected' : ''; ?>
+														value="Marketing">Marketing</option>
+												</select>
+												<?php echo $errors['department']; ?>
+											</div>
+										</div>
+										<br><br>
+								<div class="form-group">
+								<!-- <div class="row"> -->
+									<!-- <div class="col-sm-4">
+										<label for="designation">Designation</label>
+										<input type="text" class="form-control" name="designation" id="designation"
+											 /> -->
+											 <!-- Added Code - Andrie -->
+								<div class="form-group">
+										<label for="designation" class="col-sm-4">Designation</label>
+											<div class="col-sm-6">
+												<select class="form-control" id="designation" name="designation" required />
+													<option value="">Please make a choice</option>
+													<option <?php echo $_POST['designation'] == 'Marketing' ? 'selected' : ''; ?>
+														value="Marketing">Marketing</option>
+													<option <?php echo $_POST['designation'] == 'Developer' ? 'selected' : ''; ?>
+														value="Developer">Developer</option>
+													<option <?php echo $_POST['designation'] == 'Human Resource' ? 'selected' : ''; ?>
+														value="Human Resource">Human Resource</option>
+													<option <?php echo $_POST['designation'] == 'Finance' ? 'selected' : ''; ?>
+														value="Finance">Finance</option>
+													<option <?php echo $_POST['designation'] == 'Management' ? 'selected' : ''; ?>
+														value="Management">Management</option>
+												</select>
+												<?php echo $errors['designation']; ?>
+											</div>
+										</div>
+										<br><br>
 									<!-- <div class="col-sm-4">
 										<label for="pan_no">PAN No.</label>
 										<input type="text" class="form-control" name="pan_no" id="pan_no" required />
@@ -457,7 +499,6 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 			// Redirect to the constructed URL
 			window.location.href = url;
 		});
-
 
 	</script>
 
