@@ -337,11 +337,11 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 													<option <?php echo $_POST['department'] == 'Corporate' ? 'selected' : ''; ?>
 														value="Corporate">Corporate</option>
 													<option <?php echo $_POST['department'] == 'Information Technology' ? 'selected' : ''; ?>
-														value="Information Technology">Information Technology</option>
+														value="IT">Information Technology</option>
 													<option <?php echo $_POST['department'] == 'Collector' ? 'selected' : ''; ?>
 														value="Collector">Collector</option>
 													<option <?php echo $_POST['department'] == 'Human Resource' ? 'selected' : ''; ?>
-														value="Human Resource">Human Resource</option>
+														value="HR">Human Resource</option>
 													<option <?php echo $_POST['department'] == 'Marketing' ? 'selected' : ''; ?>
 														value="Marketing">Marketing</option>
 												</select>

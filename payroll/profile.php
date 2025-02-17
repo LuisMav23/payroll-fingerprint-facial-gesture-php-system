@@ -298,43 +298,6 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 																required />
 														</div>
 													</div>
-													<div class="col-lg-3">
-														<div class="form-group">
-															<label for="pan_no">PAN No.</label>
-															<input type="text" class="form-control" name="pan_no" id="pan_no"
-																value="<?php echo $data['pan_no']; ?>" required />
-														</div>
-													</div>
-													<div class="col-lg-3">
-														<div class="form-group">
-															<label for="bank_name">Bank Name</label>
-															<input type="text" class="form-control" name="bank_name" id="bank_name"
-																value="<?php echo $data['bank_name']; ?>" required />
-														</div>
-													</div>
-													<div class="col-lg-3">
-														<div class="form-group">
-															<label for="account_no">Bank A/C No.</label>
-															<input type="text" class="form-control" name="account_no"
-																id="account_no" value="<?php echo $data['account_no']; ?>"
-																required />
-														</div>
-													</div>
-													<div class="col-lg-3">
-														<div class="form-group">
-															<label for="ifsc_code">IFSC Code</label>
-															<input type="text" class="form-control" name="ifsc_code" id="ifsc_code"
-																value="<?php echo $data['ifsc_code']; ?>" required />
-														</div>
-													</div>
-													<div class="col-lg-3">
-														<div class="form-group">
-															<label for="pf_account">PF A/C No.</label>
-															<input type="text" class="form-control" name="pf_account"
-																id="pf_account" value="<?php echo $data['pf_account']; ?>"
-																required />
-														</div>
-													</div>
 												</div>
 												<div class="form-group">
 													<button type="submit" class="btn btn-primary">Submit</button>
