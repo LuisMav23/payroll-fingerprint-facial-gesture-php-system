@@ -99,7 +99,7 @@ if ($checkSalarySQL) {
 													<td><?php echo $empData['account_no']; ?></td>
 												</tr>
 												<tr>
-													<td>Designation</td>
+													<td>Position</td>
 													<td><?php echo ucwords($empData['designation']); ?></td>
 													<td>IFSC Code 
 													<td><?php echo strtoupper($empData['ifsc_code']); ?></td> -->
@@ -148,21 +148,51 @@ if ($checkSalarySQL) {
 																<table class="table table-bordered table-striped"
 																	style="margin:0">
 																	<?php
-																		$dailySalary = GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
-																		$totalEarnings += $dailySalary; 
+																		$valid_designations = [
+																			'General Manager', 'Operation Manager', 'Account Staff', 
+																			'Finance Supervisor', 'HR Manager', 'Admin Officer', 'Liaison Officer'
+																		];
+																		$salary_mapping = [
+																			'General Manager' => 30000,
+																			'Operation Manager' => 30000,
+																			'Account Staff' => 26000,
+																			'Finance Supervisor' => 26000,
+																			'HR Manager' => 25000,
+																			'Admin Officer' => 25000,
+																			'Liaison Officer' => 25000
+																		];
+
+																		$position = $empData['designation'];
+																		$fixed_salary = 0;
+																		$totalEarnings = 0;
+
+																		if (!in_array($position, $valid_designations)) {
+																			$dailySalary = GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
+																			$totalEarnings += $dailySalary;
+																		?>
+																			<tr>
+																				<td width="70%">Daily Salary</td>
+																				<td width="30%" class="text-right">
+																					<input type="hidden" name="earnings_heads[]" value="Daily Salary" />
+																					<input type="text" name="earnings_amounts[]" value="<?php echo number_format($dailySalary, 2, '.', ''); ?>" class="form-control text-right" />
+																				</td>
+																			</tr>
+																		<?php 
+																		} else {
+																			$fixed_salary = $salary_mapping[$position] ?? 0;
+																			$totalEarnings += $fixed_salary;
+																		?>
+																			<tr>
+																				<td width="70%">Fixed Salary</td>
+																				<td width="30%" class="text-right">
+																					<input type="hidden" name="earnings_heads[]" value="Fixed Salary" />
+																					<input type="text" name="earnings_amounts[]" value="<?php echo number_format($fixed_salary, 2, '.', ''); ?>" class="form-control text-right" />
+																				</td>
+																			</tr>
+																		<?php } ?>
+																	<?php
+																		
 																	?>
-																	<tr>
-																		<td width="70%">
-																			Daily Salary
-																		</td>
-																		<td width="30%" class="text-right">
-																			<input type="hidden" name="earnings_heads[]"
-																				value="Daily Salary" />
-																			<input type="text" name="earnings_amounts[]"
-																				value="<?php echo number_format($dailySalary, 2, '.', ''); ?>"
-																				class="form-control text-right" />
-																		</td>
-																	</tr>
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'earnings') { ?>
 																			<?php $totalEarnings += $head['default_salary']; ?>

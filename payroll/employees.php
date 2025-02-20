@@ -68,7 +68,7 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 
 
 									if (filter_var($ipAddressWithPort, FILTER_VALIDATE_URL)) {
-										echo '<a class="btn btn-primary" target="_blank" href="' . $ipAddressWithPort . '/start_recognition?account_type=superadmin?">
+										echo '<a class="btn btn-primary" target="_blank" href="localhost:5000/start_recognition?account_type=superadmin?">
             <i class="fa fa-qrcode"></i> Create Facial ID
           </a>';
 									} else {
@@ -357,23 +357,29 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 											 /> -->
 											 <!-- Added Code - Andrie -->
 								<div class="form-group">
-										<label for="designation" class="col-sm-4">Designation</label>
+											<label for="designation" class="col-sm-4">Position</label>
 											<div class="col-sm-6">
-												<select class="form-control" id="designation" name="designation" required />
+												<select class="form-control" name="designation" id="designation" required>
 													<option value="">Please make a choice</option>
-													<option <?php echo $_POST['designation'] == 'Marketing' ? 'selected' : ''; ?>
-														value="Marketing">Marketing</option>
-													<option <?php echo $_POST['designation'] == 'Developer' ? 'selected' : ''; ?>
-														value="Developer">Developer</option>
-													<option <?php echo $_POST['designation'] == 'Human Resource' ? 'selected' : ''; ?>
-														value="Human Resource">Human Resource</option>
-													<option <?php echo $_POST['designation'] == 'Finance' ? 'selected' : ''; ?>
-														value="Finance">Finance</option>
-													<option <?php echo $_POST['designation'] == 'Management' ? 'selected' : ''; ?>
-														value="Management">Management</option>
+													<?php
+													$designations = [
+														"Collectors", "Drivers", "Pesticide Handler", "Liaison Officer",
+														"Office Staff", "Supervisor/Team", "General Manager",
+														"Operation Manager", "HR Manager", "Finance Supervisor",
+														"Admin Officer", "Accounting Staff"
+													];
+
+													$selectedDesignation = $_POST['designation'] ?? '';
+
+													foreach ($designations as $designation) {
+														$selected = ($selectedDesignation == $designation) ? 'selected' : '';
+														echo "<option value=\"$designation\" $selected>$designation</option>";
+													}
+													?>
 												</select>
-												<?php echo $errors['designation']; ?>
+												<?php echo $errors['designation'] ?? ''; ?>
 											</div>
+
 										</div>
 										<br><br>
 									<!-- <div class="col-sm-4">

@@ -284,10 +284,25 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 													</div>
 													<div class="col-lg-3">
 														<div class="form-group">
-															<label for="designation">Designation</label>
-															<input type="text" class="form-control" name="designation"
-																id="designation" value="<?php echo $data['designation']; ?>"
-																required />
+															<label for="designation">Position</label>
+															<select class="form-control" name="designation" id="designation" required>
+																<option value="">Please make a choice</option>
+																<?php
+																$designations = [
+																	"Collectors", "Drivers", "Pesticide Handler", "Liaison Officer",
+																	"Office Staff", "Supervisor/Team", "General Manager",
+																	"Operation Manager", "HR Manager", "Finance Supervisor",
+																	"Admin Officer", "Accounting Staff"
+																];
+
+																$selectedDesignation = $data['designation'] ?? '';
+
+																foreach ($designations as $designation) {
+																	$selected = ($selectedDesignation == $designation) ? 'selected' : '';
+																	echo "<option value=\"$designation\" $selected>$designation</option>";
+																}
+																?>
+															</select>
 														</div>
 													</div>
 													<div class="col-lg-3">
