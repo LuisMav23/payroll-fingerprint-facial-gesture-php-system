@@ -68,7 +68,7 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 
 
 									if (filter_var($ipAddressWithPort, FILTER_VALIDATE_URL)) {
-										echo '<a class="btn btn-primary" target="_blank" href="localhost:5000/start_recognition?account_type=superadmin?">
+										echo '<a class="btn btn-primary" target="_blank" href="http://localhost:5000/start_recognition?account_type=superadmin">
             <i class="fa fa-qrcode"></i> Create Facial ID
           </a>';
 									} else {
