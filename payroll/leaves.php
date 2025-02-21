@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<thead>
 											<tr>
 												<th>#</th>
-												<th>EMP CODE</th>
+												<th>NAME</th>
 												<th>SUBJECT</th>
 												<th>DATES</th>
 												<th>MESSAGE</th>

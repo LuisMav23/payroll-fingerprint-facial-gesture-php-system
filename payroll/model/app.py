@@ -70,17 +70,17 @@ def apply_overtime():
 
         # Insert overtime record into wy_attendance
         insert_attendance_query = """
-            INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)
+            VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(insert_attendance_query, (emp_code, today_date, "overtime", current_time))
+        cursor.execute(insert_attendance_query, (emp_code, today_date, "overtime in", current_time, "Overtime in"))
 
         # Insert overtime record into wy_overtimes with status
-        insert_overtime_query = """
-            INSERT INTO wy_overtimes (emp_code, overtime_out_time, overtime_date, status)
-            VALUES (%s, %s, %s, %s)
-        """
-        cursor.execute(insert_overtime_query, (emp_code, attendance_record['action_time'], today_date, "pending"))
+        # insert_overtime_query = """
+        #     INSERT INTO wy_overtimes (emp_code, overtime_out_time, overtime_date, status)
+        #     VALUES (%s, %s, %s, %s)
+        # """
+        # cursor.execute(insert_overtime_query, (emp_code, attendance_record['action_time'], today_date, "pending"))
         conn.commit()
 
         return jsonify({"message": "Overtime application submitted successfully, pending approval"})
@@ -128,8 +128,10 @@ def gesture():
             attendance_status = "Timed in"
         elif attendance_info["action_name"] == "time-out":
             attendance_status = "Timed out"
+        elif attendance_info["action_name"] == "overtime in":
+            attendance_status = "Overtime in"
         else:
-            attendance_status = "Overtime"
+            attendance_status = "Overtime out"
 
         cursor.close()
         conn.close()
@@ -194,7 +196,6 @@ def check_gesture():
         today_date = datetime.now().date()
         current_time = datetime.now().time()
 
-        # Define the late time threshold
         late_time_threshold = datetime.strptime("07:15:00", "%H:%M:%S").time()
 
         check_query = """
@@ -202,15 +203,13 @@ def check_gesture():
             WHERE emp_code = %s AND attendance_date = %s
             ORDER BY action_time DESC LIMIT 1
         """
-        cursor.execute(check_query, (emp_code, today_date)) # Execute the query
+        cursor.execute(check_query, (emp_code, today_date))
         attendance_record = cursor.fetchone()
 
         if not attendance_record:
-
             if action_name != "time-in":
                 return jsonify({"error": "You must time in first"}), 400
 
-            # Determine if the user is late
             is_late = current_time > late_time_threshold
             emp_desc = "Late" if is_late else "On Time"
 
@@ -230,7 +229,6 @@ def check_gesture():
             return jsonify({"error": "You already timed in today"}), 400
 
         if action_name == "time-out":
-
             check_timeout_query = """
                 SELECT attendance_id FROM wy_attendance
                 WHERE emp_code = %s AND attendance_date = %s AND action_name = %s
@@ -252,32 +250,30 @@ def check_gesture():
             return jsonify({"message": "Time-out recorded successfully"}), 200
 
         if action_name == "overtime":
-            if last_action == "time-in":
-                return jsonify({"error": "You must time out first before overtime"}), 400
+            if last_action != "overtime in":
+                return jsonify({"error": "You must apply for overtime first before overtime out"}), 400
 
-            # Get the time when the employee checked out (time-out)
             check_out_query = """
                 SELECT action_time FROM wy_attendance
                 WHERE emp_code = %s AND attendance_date = %s AND action_name = %s
                 ORDER BY action_time DESC LIMIT 1
             """
-            cursor.execute(check_out_query, (emp_code, today_date, "time-out"))
-            checkout_record = cursor.fetchone()
+            cursor.execute(check_out_query, (emp_code, today_date, "overtime in"))
+            overtime_out_record = cursor.fetchone()
 
-            if not checkout_record:
-                return jsonify({"error": "You must check out before recording overtime"}), 400
+            if not overtime_out_record:
+                return jsonify({"error": "You must apply for overtime before recording overtime out"}), 400
 
-            check_out_time = checkout_record[0]
+            check_out_time = overtime_out_record[0]
+            check_out_time = (datetime.min + check_out_time).time() if isinstance(check_out_time, timedelta) else check_out_time
 
-            # Define regular working hours (e.g., 8 hours)
-            regular_working_hours = timedelta(hours=8)
+            overtime_duration = datetime.combine(today_date, current_time) - datetime.combine(today_date, check_out_time)
+            overtime_hours = round(overtime_duration.total_seconds() / 3600)
 
-            # Calculate the overtime
-            check_in_time = datetime.combine(today_date, datetime.min.time()) + timedelta(hours=7)  # assuming 7 AM check-in time
-            worked_hours = datetime.combine(today_date, current_time) - check_in_time
-            overtime_duration = max(worked_hours - regular_working_hours, timedelta(0))  # Calculate overtime
-
-            overtime_hours = int(overtime_duration.total_seconds() / 3600)  # Convert to hours
+# Ensure it's not negative
+            if overtime_hours < 0:
+                return jsonify({"error": "Invalid overtime hours calculated"}), 400
+            print("OVERTIME HOURS: ", overtime_hours)
 
             insert_query = """
                 INSERT INTO wy_attendance (emp_code, attendance_date, action_name, action_time, emp_desc)
@@ -288,7 +284,6 @@ def check_gesture():
             )
             conn.commit()
 
-            # Insert overtime record into wy_overtimes with calculated overtime hours
             insert_overtime_query = """
                 INSERT INTO wy_overtimes (emp_code, overtime_hours, overtime_date, status)
                 VALUES (%s, %s, %s, %s)
@@ -297,7 +292,6 @@ def check_gesture():
             conn.commit()
 
             return jsonify({"message": f"Overtime recorded successfully: {overtime_hours} hours"}), 200
-
 
         return jsonify({"error": "Invalid action sequence"}), 400
 
@@ -308,6 +302,7 @@ def check_gesture():
         if conn.is_connected():
             cursor.close()
             conn.close()
+
    
 
 @app.route("/train", methods=["POST"])

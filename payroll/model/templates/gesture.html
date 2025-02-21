@@ -96,7 +96,7 @@
   <body>
     <!-- Header with Real-Time Date and Time -->
     <div class="text-center mb-4">
-      <h2 class="page-title">Gesture Recognition</h2>
+      <h2 class="page-title">Employee Face Recognition</h2>
       <p id="dateTime" class="date-time-text"></p>
     </div>
     <div
@@ -140,12 +140,32 @@
           <strong>Attendance Status:</strong>
           <span class="text-red">{{ attendance_status }}</span>
         </p>
-        {% else %}
+        {% elif attendance_status == 'Overtime in' %}
         <p>
           <strong>Attendance Status:</strong>
           <span class="text-orange">{{ attendance_status }}</span>
         </p>
+        {% else %}
+        <p>
+          <strong>Attendance Status:</strong>
+          <span class="text-red">{{ attendance_status }}</span>
         {% endif %}
+        <button
+          id="applyOvertimeBtn"
+          class="btn btn-primary mt-3"
+          onclick="applyForOvertime('{{ employee.emp_code }}')"
+          {%
+          if
+          attendance_status
+          !="Timed out"
+          %}
+          disabled
+          {%
+          endif
+          %}
+        >
+          Apply for Overtime
+        </button>
         {% else %}
         <p>Employee not found.</p>
         {% endif %}

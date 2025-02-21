@@ -203,24 +203,28 @@ function AttendanceProcessHandler()
 
 function GetAllOvertimes()
 {
-    global $db;
+	global $db;
 
-    $sql = "SELECT * FROM `" . DB_PREFIX . "overtimes`";
-    $query = mysqli_query($db, $sql);
-    $data = array();
+	$sql = "SELECT ot.*, emp.first_name, emp.last_name FROM `" . DB_PREFIX . "overtimes` ot
+			JOIN `" . DB_PREFIX . "employees` emp ON ot.emp_code = emp.emp_code";
+	$query = mysqli_query($db, $sql);
+	$data = array();
 
-    while ($row = mysqli_fetch_assoc($query)) {
-        $nestedData = array();
-        $nestedData[] = $row["id"];
-        $nestedData[] = $row["emp_code"];
-        $nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
-        $nestedData[] = $row["overtime_hours"]; // Add time out
-        $nestedData[] = $row["status"];
-        
-        $data[] = $nestedData;
-    }
-    header('Content-Type: application/json');
-    echo json_encode(array('data' => $data));
+	while ($row = mysqli_fetch_assoc($query)) {
+		$nestedData = array();
+		$nestedData[] = $row["emp_code"];
+		$nestedData[] = $row["first_name"] . " " . $row["last_name"];
+		$nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
+		$nestedData[] = $row["overtime_hours"];
+		$nestedData[] = $row["status"];
+		$nestedData[] = $row["id"];
+
+		
+		
+		$data[] = $nestedData;
+	}
+	header('Content-Type: application/json');
+	echo json_encode(array('data' => $data));
 }
 
 function GetEmployeeOvertimeById() {
@@ -247,10 +251,10 @@ function GetEmployeeOvertimeById() {
 	while ($row = mysqli_fetch_assoc($query)) {
 		$nestedData = array();
 		$nestedData[] = $row["id"];
-		$nestedData[] = $row["emp_code"];
 		$nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
 		$nestedData[] = $row["overtime_hours"];
 		$nestedData[] = $row["status"];
+		$nestedData[] = $row["created_at"];
 		
 		$data[] = $nestedData;
 	}
@@ -1325,36 +1329,36 @@ function GeneratePaySlip()
 			$html .= '<tr>';
 			$html .= '<td width="25%">Employee Code</td>';
 			$html .= '<td width="25%">: ' . strtoupper($emp_code) . '</td>';
-			$html .= '<td width="25%">Bank Name</td>';
-			$html .= '<td width="25%">: ' . ucwords($empData['bank_name']) . '</td>';
+			$html .= '<td width="25%">Type</td>';
+			$html .= '<td width="25%">: ' . ucwords($empData['emp_type']) . '</td>';
 			$html .= '</tr>';
 
 			$html .= '<tr>';
 			$html .= '<td>Employee Name</td>';
 			$html .= '<td>: ' . ucwords($empData['first_name'] . ' ' . $empData['last_name']) . '</td>';
-			$html .= '<td>Bank Account</td>';
-			$html .= '<td>: ' . $empData['account_no'] . '</td>';
+			$html .= '<td>Mobile</td>';
+			$html .= '<td>: ' . $empData['mobile'] . '</td>';
 			$html .= '</tr>';
 
 			$html .= '<tr>';
 			$html .= '<td>Designation</td>';
 			$html .= '<td>: ' . ucwords($empData['designation']) . '</td>';
-			$html .= '<td>IFSC Code</td>';
-			$html .= '<td>: ' . strtoupper($empData['ifsc_code']) . '</td>';
+			$html .= '<td>Telephone</td>';
+			$html .= '<td>: ' . strtoupper($empData['telephone']) . '</td>';
 			$html .= '</tr>';
 
 			$html .= '<tr>';
 			$html .= '<td>Gender</td>';
 			$html .= '<td>: ' . ucwords($empData['gender']) . '</td>';
-			$html .= '<td>PAN</td>';
-			$html .= '<td>: ' . strtoupper($empData['pan_no']) . '</td>';
+			$html .= '<td>State</td>';
+			$html .= '<td>: ' . strtoupper($empData['state']) . '</td>';
 			$html .= '</tr>';
 
 			$html .= '<tr>';
-			$html .= '<td>Location</td>';
+			$html .= '<td>City</td>';
 			$html .= '<td>: ' . ucwords($empData['city']) . '</td>';
-			$html .= '<td>PF Account</td>';
-			$html .= '<td>: ' . strtoupper($empData['pf_account']) . '</td>';
+			$html .= '<td>Country</td>';
+			$html .= '<td>: ' . strtoupper($empData['country']) . '</td>';
 			$html .= '</tr>';
 
 			$html .= '<tr>';
@@ -1679,9 +1683,17 @@ function LoadingAllLeaves()
 	$data = array();
 	$i = 1 + $start;
 	while ($row = mysqli_fetch_assoc($query)) {
+		$emp_code = $row["emp_code"];
+		$empQuery = mysqli_query($db, "SELECT first_name, last_name FROM `" . DB_PREFIX . "employees` WHERE emp_code = '$emp_code' LIMIT 1");
+		$empName = '';
+		if ($empQuery && mysqli_num_rows($empQuery) > 0) {
+			$empRow = mysqli_fetch_assoc($empQuery);
+			$empName = $empRow['first_name'] . ' ' . $empRow['last_name'];
+		}
+
 		$nestedData = array();
 		$nestedData[] = $row["leave_id"];
-		$nestedData[] = '<a target="_blank" href="' . REG_URL . 'reports/' . $row["emp_code"] . '/">' . $row["emp_code"] . '</a>';
+		$nestedData[] = '<a target="_blank" href="' . REG_URL . 'reports/' . $row["emp_code"] . '/">' . $empName . '</a>';
 		$nestedData[] = $row["leave_subject"];
 		$nestedData[] = $row["leave_date_start"] . " to " . $row["leave_date_end"]; // Display as a range
 		$nestedData[] = $row["leave_message"];

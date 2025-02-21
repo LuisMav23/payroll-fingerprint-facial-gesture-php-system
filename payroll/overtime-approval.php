@@ -53,8 +53,8 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 								<table id="allovertime" class="table table-bordered table-striped">
 									<thead>
 										<tr>
-											<th>#</th>
 											<th>EMP CODE</th>
+											<th>NAME</th>
 											<th>DATE</th>
 											<th>HOURS</th>
 											<th>STATUS</th>
@@ -93,10 +93,10 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 									<thead>
 										<tr>
 											<th>#</th>
-											<th>EMP CODE</th>
 											<th>DATE</th>
 											<th>HOURS</th>
 											<th>STATUS</th>
+											<th>CREATED AT</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -146,10 +146,10 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 										<td>${record[3]}</td>
 										<td>${record[4]}</td>
 										<td>
-											<button class="btn btn-primary approveovertime" data-overtimeid="${record[0]}">
+											<button class="btn btn-primary approveovertime" data-overtimeid="${record[5]}">
 												Approve
 											</button>
-											<button class="btn btn-danger rejectovertime" data-overtimeid="${record[0]}">
+											<button class="btn btn-danger rejectovertime" data-overtimeid="${record[5]}">
 												Reject
 											</button>
 										</td>

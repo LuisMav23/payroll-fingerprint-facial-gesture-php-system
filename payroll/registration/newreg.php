@@ -139,15 +139,42 @@ if (isset($_POST['submit'])) {
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <style>
+        .register-page {
+        background-color: #111733;
+      }
+
+        .register-title {
+            font-family: "Orbitron", sans-serif;
+            color: rgb(255, 233, 111);
+            
+        }
+
+        .payroll {
+            color:rgb(247, 165, 34);
+            font-weight:bold;
+        }
+
+        .management {
+            color:rgb(255, 233, 111);
+            font-weight:100;
+        }
+    </style>
 </head>
 
 <body class="hold-transition register-page">
     <div class="container">
         <div class="register-box">
-            <div class="register-logo">
-                <a href="<?php echo BASE_URL; ?>"><b>Payroll</b> Management</a>
+            <div class="register-logo register-title">
+                <a href="<?php echo BASE_URL; ?>" class="register-title">
+                    <!-- <img src="../dist/img/logo.png" alt="Alar Logo"> -->
+                    <b class="payroll">Payroll</b> <span class="management"> Management </span>
+                </a>
+                <br>
                 <small>Employee Registration Form</small>
             </div>
+            <div class="form-group">
         </div>
         <div class="box box-primary">
             <div class="box-header with-border">
