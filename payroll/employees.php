@@ -292,7 +292,7 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<select class="form-control" name="identity_doc" id="identity_doc" required>
 											<option value="">Please make a choice</option>
 											<option value="Voter Id">Voter Id</option>
-											<option value="Aadhar Card">National ID Card</option>
+											<option value="National Card">National ID Card</option>
 											<option value="Driving License">Driving License</option>
 											<option value="Passport">Passport</option>
 										</select>
@@ -329,21 +329,21 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<input type="text" class="form-control" name="department" id="department"
 											 /> -->
 											 <!-- Added Code - Andrie -->
-								<div class="form-group">
+									<div class="form-group">
 										<label for="department" class="col-sm-4">Department</label>
 											<div class="col-sm-6">
 												<select class="form-control" id="department" name="department" required />
 													<option value="">Please make a choice</option>
-													<option <?php echo $_POST['department'] == 'Corporate' ? 'selected' : ''; ?>
-														value="Corporate">Corporate</option>
-													<option <?php echo $_POST['department'] == 'Information Technology' ? 'selected' : ''; ?>
-														value="IT">Information Technology</option>
-													<option <?php echo $_POST['department'] == 'Collector' ? 'selected' : ''; ?>
-														value="Collector">Collector</option>
-													<option <?php echo $_POST['department'] == 'Human Resource' ? 'selected' : ''; ?>
-														value="HR">Human Resource</option>
-													<option <?php echo $_POST['department'] == 'Marketing' ? 'selected' : ''; ?>
-														value="Marketing">Marketing</option>
+													<option <?php echo $_POST['department'] == 'Operation' ? 'selected' : ''; ?>
+														value="Operation">Operation Department</option>
+													<option <?php echo $_POST['department'] == 'Admin' ? 'selected' : ''; ?>
+														value="Admin">Admin Department</option>
+													<option <?php echo $_POST['department'] == 'Billing' ? 'selected' : ''; ?>
+														value="Billing">Billing Department</option>
+													<option <?php echo $_POST['department'] == 'Warehouse' ? 'selected' : ''; ?>
+														value="Warehouse">Warehouse Department</option>
+													<option <?php echo $_POST['department'] == 'Accounting' ? 'selected' : ''; ?>
+														value="Accounting">Accounting Department</option>
 												</select>
 												<?php echo $errors['department']; ?>
 											</div>
@@ -379,7 +379,6 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 												</select>
 												<?php echo $errors['designation'] ?? ''; ?>
 											</div>
-
 										</div>
 										<br><br>
 									<!-- <div class="col-sm-4">

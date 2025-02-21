@@ -172,7 +172,7 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="dob" class="col-sm-2 control-label">DOB</label>
+                        <label for="dob" class="col-sm-2 control-label">Date of Birth</label>
                         <div class="col-sm-5">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="dob" name="dob" placeholder="MM/DD/YYYY"
@@ -298,7 +298,7 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="id_no" class="col-sm-2 control-label">Id Number</label>
+                        <label for="id_no" class="col-sm-2 control-label">ID Number</label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="id_no" name="id_no"
                                 placeholder="Identification No" value="<?php echo $_POST['id_no']; ?>" required />
@@ -307,12 +307,28 @@ if (isset($_POST['submit'])) {
                     </div>
                     <hr />
                         <div class="form-group">
-                            <label for="bloodgrp" class="col-sm-2 control-label">Designation</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" id="bloodgrp" name="designation"
-                                    placeholder="Designation" value="<?php echo $_POST['designation']; ?>" required />
-                                <?php echo $errors['designation']; ?>
-                            </div>
+                        <label for="designation" class="col-sm-2 control-label">Position</label>
+											<div class="col-sm-10">
+												<select class="form-control" name="designation" id="designation" required>
+													<option value="">Please make a choice</option>
+													<?php
+													$designations = [
+														"Collectors", "Drivers", "Pesticide Handler", "Liaison Officer",
+														"Office Staff", "Supervisor/Team", "General Manager",
+														"Operation Manager", "HR Manager", "Finance Supervisor",
+														"Admin Officer", "Accounting Staff"
+													];
+
+													$selectedDesignation = $_POST['designation'] ?? '';
+
+													foreach ($designations as $designation) {
+														$selected = ($selectedDesignation == $designation) ? 'selected' : '';
+														echo "<option value=\"$designation\" $selected>$designation</option>";
+													}
+													?>
+												</select>
+												<?php echo $errors['designation'] ?? ''; ?>
+											</div>
                         </div>
                     <div class="form-group">
                         <label for="employment_type" class="col-sm-2 control-label">Employee Type</label>
