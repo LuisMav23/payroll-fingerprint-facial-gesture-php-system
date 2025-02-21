@@ -210,7 +210,7 @@ if ($checkSalarySQL) {
 																			</tr>
 																		<?php } ?>
 																	<?php } ?>
-																	<?php if (CheckOvertimeDataByEmpcode($empData['emp_code'], $month, $cutoffFlag)) { ?>
+																	<?php if (CheckOvertimeDataByEmpcode($empData['emp_code'], $month, $cutoffFlag) && !in_array($position, $valid_designations)) { ?>
 																	<?php
 																		$overtimeEarnings = GetOvertimeHoursByEmpCodeAndMonth($empData['emp_code'], $month, $cutoffFlag);
 																		$totalEarnings += $overtimeEarnings; 

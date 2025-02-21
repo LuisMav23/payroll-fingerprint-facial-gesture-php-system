@@ -9,6 +9,9 @@ switch ($case) {
 	case 'GetAllOvertimes':
 		GetAllOvertimes();
 		break;
+	case 'GetMyOvertimes':
+		GetEmployeeOvertimeById();
+		break;
 	case 'GetAllEmployees':
 		GetAllEmployees();
 		break;
@@ -132,6 +135,7 @@ function LoginProcessHandler()
 					if (mysqli_num_rows($empCheck) == 1) {
 						$empData = mysqli_fetch_assoc($empCheck);
 						$_SESSION['Admin_ID'] = $empData['emp_id'];
+						$_SESSION['Employee_Code'] = $code;
 						$_SESSION['Login_Type'] = 'emp';
 						$result['result'] = BASE_URL . 'profile/';
 						$result['code'] = 0;
@@ -217,6 +221,43 @@ function GetAllOvertimes()
     }
     header('Content-Type: application/json');
     echo json_encode(array('data' => $data));
+}
+
+function GetEmployeeOvertimeById() {
+	global $db;
+
+	// Validate and sanitize emp_code to prevent SQL injection
+	if (!isset($_GET['emp_code'])) {
+		echo json_encode(['error' => 'Employee code is required']);
+		return;
+	}
+
+	$emp_code = mysqli_real_escape_string($db, $_GET['emp_code']);
+
+	// SQL query to fetch overtime records
+	$sql = "SELECT * FROM `" . DB_PREFIX . "overtimes` WHERE emp_code = '$emp_code'";
+	$query = mysqli_query($db, $sql);
+
+	if (!$query) {
+		echo json_encode(['error' => 'Database query failed: ' . mysqli_error($db)]);
+		return;
+	}
+
+	$data = [];
+	while ($row = mysqli_fetch_assoc($query)) {
+		$nestedData = array();
+		$nestedData[] = $row["id"];
+		$nestedData[] = $row["emp_code"];
+		$nestedData[] = date('d-m-Y', strtotime($row["overtime_date"])); // Format date
+		$nestedData[] = $row["overtime_hours"];
+		$nestedData[] = $row["status"];
+		
+		$data[] = $nestedData;
+	}
+
+	// Return JSON response
+	header('Content-Type: application/json');
+	echo json_encode(['data' => $data]);
 }
 
 function GetAllEmployees()

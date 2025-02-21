@@ -97,6 +97,11 @@ if ($attendanceSQL) {
 				<i class="fa fa-calendar"></i> <span>Attendance</span>
 			</a>
 		</li>
+		<li class="<?php echo $page_name == "overtime-approval" ? 'active' : ''; ?>">
+			<a href="<?php echo BASE_URL; ?>overtime-approval/">
+				<i class="fa fa-clock-o"></i> <span>Overtimes</span>
+			</a>
+		</li>
 		<li class="<?php echo $page_name == "leaves" ? 'active' : ''; ?>">
 			<a href="<?php echo BASE_URL; ?>leaves/">
 				<i class="fa fa-sign-out"></i> <span>Leaves</span>

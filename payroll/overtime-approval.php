@@ -32,7 +32,7 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 
 		<?php require_once(dirname(__FILE__) . '/partials/topnav.php'); ?>
 		<?php require_once(dirname(__FILE__) . '/partials/sidenav.php'); ?>
-
+		<?php if ($_SESSION['Login_Type'] == 'admin'){ ?>
 		<div class="content-wrapper">
 			<section class="content-header">
 				<h1>Overtime</h1>
@@ -71,6 +71,46 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 				</div>
 			</section>
 		</div>
+		<?php } else { ?>
+			<div class="content-wrapper">
+			<section class="content-header">
+				<h1>My Overtime</h1>
+				<ol class="breadcrumb">
+					<li><a href="<?php echo BASE_URL; ?>"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li class="active">Overtime</li>
+				</ol>
+			</section>
+
+			<section class="content">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box">
+							<div class="box-header">
+								<h3 class="box-title">All Overtime Requests</h3>
+							</div>
+							<div class="box-body">
+								<table id="myovertimes" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>EMP CODE</th>
+											<th>DATE</th>
+											<th>HOURS</th>
+											<th>STATUS</th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Overtime data will be dynamically added here -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<?php } ?>
 
 		<footer class="main-footer">
 			<strong>&copy; <?php echo date("Y"); ?> Employee Management System</strong>
@@ -90,40 +130,40 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 
 		$(document).ready(function () {
 			// Fetch all overtime requests
-			$.ajax({
-				url: baseurl + 'ajax/?case=GetAllOvertimes',
-				type: 'GET',
-				success: function (response) {
-					if (response.data) {
-						$('#allovertime tbody').empty();
-						response.data.forEach(record => {
-							const row = `
-								<tr>
-									<td>${record[0]}</td>
-									<td>${record[1]}</td>
-									<td>${record[2]}</td>
-									<td>${record[3]}</td>
-									<td>${record[4]}</td>
-									<td>
-										<button class="btn btn-primary approveovertime" data-overtimeid="${record[0]}">
-											Approve
-										</button>
-										<button class="btn btn-danger rejectovertime" data-overtimeid="${record[0]}">
-											Reject
-										</button>
-									</td>
-								</tr>`;
-							$('#allovertime tbody').append(row);
-						});
+			if ('<?php echo $_SESSION['Login_Type']; ?>' == 'admin') {
+				$.ajax({
+					url: baseurl + 'ajax/?case=GetAllOvertimes',
+					type: 'GET',
+					success: function (response) {
+						if (response.data) {
+							$('#allovertime tbody').empty();
+							response.data.forEach(record => {
+								const row = `
+									<tr>
+										<td>${record[0]}</td>
+										<td>${record[1]}</td>
+										<td>${record[2]}</td>
+										<td>${record[3]}</td>
+										<td>${record[4]}</td>
+										<td>
+											<button class="btn btn-primary approveovertime" data-overtimeid="${record[0]}">
+												Approve
+											</button>
+											<button class="btn btn-danger rejectovertime" data-overtimeid="${record[0]}">
+												Reject
+											</button>
+										</td>
+									</tr>`;
+								$('#allovertime tbody').append(row);
+							});
+						}
+					},
+					error: function (xhr, status, error) {
+						console.error('Error fetching overtime data:', error);
 					}
-				},
-				error: function (xhr, status, error) {
-					console.error('Error fetching overtime data:', error);
-				}
-			});
+				});
 
-			// Approve overtime
-			$(document).on('click', '.approveovertime', function () {
+				$(document).on('click', '.approveovertime', function () {
 				const overtimeid = $(this).data('overtimeid');
 				$.ajax({
 					url: baseurl + 'ajax/?case=ApproveOvertime',
@@ -138,7 +178,7 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 					}
 				});
 			});
-
+ 
 			// Reject overtime
 			$(document).on('click', '.rejectovertime', function () {
 				const overtimeid = $(this).data('overtimeid');
@@ -155,6 +195,67 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 					}
 				});
 			});
+			} else {
+				console.log('<?php echo $_SESSION['Employee_Code']; ?>')
+				$.ajax({
+					url: baseurl + 'ajax/?case=GetMyOvertimes',
+					type: 'GET',
+					data: { emp_code: '<?php echo $_SESSION['Employee_Code']; ?>' },
+					success: function (response) {
+						if (response.data) {
+							$('#myovertimes tbody').empty();
+							response.data.forEach(record => {
+								const row = `
+									<tr>
+										<td>${record[0]}</td>
+										<td>${record[1]}</td>
+										<td>${record[2]}</td>
+										<td>${record[3]}</td>
+										<td>${record[4]}</td>
+									</tr>`;
+								$('#myovertimes tbody').append(row);
+							});
+						}
+					},
+					error: function (xhr, status, error) {
+						console.error('Error fetching overtime data:', error);
+					}
+				});
+			}
+			// $.ajax({
+			// 	url: baseurl + 'ajax/?case=GetAllOvertimes',
+			// 	type: 'GET',
+			// 	success: function (response) {
+			// 		if (response.data) {
+			// 			$('#allovertime tbody').empty();
+			// 			response.data.forEach(record => {
+			// 				const row = `
+			// 					<tr>
+			// 						<td>${record[0]}</td>
+			// 						<td>${record[1]}</td>
+			// 						<td>${record[2]}</td>
+			// 						<td>${record[3]}</td>
+			// 						<td>${record[4]}</td>
+			// 						<td>
+			// 							<button class="btn btn-primary approveovertime" data-overtimeid="${record[0]}">
+			// 								Approve
+			// 							</button>
+			// 							<button class="btn btn-danger rejectovertime" data-overtimeid="${record[0]}">
+			// 								Reject
+			// 							</button>
+			// 						</td>
+			// 					</tr>`;
+			// 				$('#allovertime tbody').append(row);
+			// 			});
+			// 		}
+			// 	},
+			// 	error: function (xhr, status, error) {
+			// 		console.error('Error fetching overtime data:', error);
+			// 	}
+			// });
+
+			// Approve overtime
+			
 		});
 	</script>
 </body>
