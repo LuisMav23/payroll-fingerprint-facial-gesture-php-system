@@ -84,37 +84,37 @@ if ($checkSalarySQL) {
 										<input type="hidden" name="pay_month" value="<?php echo $month; ?>" />
 										<input type="hidden" name="cutoff" value="<?php echo $cutoffFlag; ?>" />
 										<div class="table-responsive">
-											<table class="table table-bordered">
-												<tr>
+										<table class="table table-bordered">
+											<tr>
 													<td width="20%">Employee Code</td>
 													<td width="30%"><?php echo strtoupper($empData['emp_code']); ?></td>
-													<td width="20%">Bank Name</td>
-													<td width="30%"><?php echo ucwords($empData['bank_name']); ?></td>
+													<!-- <td width="20%">Bank Name</td>
+													<td width="30%"><?php echo ucwords($empData['bank_name']); ?></td> -->
 												</tr>
 												<tr>
 													<td>Employee Name</td>
 													<td><?php echo ucwords($empData['first_name'] . ' ' . $empData['last_name']); ?>
 													</td>
-													<td>Bank Account</td>
-													<td><?php echo $empData['account_no']; ?></td>
+													<!-- <td>Bank Account</td>
+													<td><?php echo $empData['account_no']; ?></td> -->
 												</tr>
 												<tr>
 													<td>Position</td>
 													<td><?php echo ucwords($empData['designation']); ?></td>
-													<td>IFSC Code 
-													<td><?php echo strtoupper($empData['ifsc_code']); ?></td> -->
+													<!-- <td>IFSC Code 
+													<td><?php echo strtoupper($empData['ifsc_code']); ?></td> --> -->
 												</tr>
 												<tr>
 													<td>Gender</td>
 													<td><?php echo ucwords($empData['gender']); ?></td>
-													<td>PAN
-													<td><?php echo strtoupper($empData['pan_no']); ?></td> -->
+													<!-- <td>PAN
+													<td><?php echo strtoupper($empData['pan_no']); ?></td> --> -->
 												</tr>
 												<tr>
 													<td>Location</td>
 													<td><?php echo ucwords($empData['city']); ?></td>
-													<td>PF Account
-													<td><?php echo strtoupper($empData['pf_account']); ?></td> -->
+													<!-- <td>PF Account
+													<td><?php echo strtoupper($empData['pf_account']); ?></td> --> -->
 												</tr>
 												<tr>
 													<td>Department</td>
