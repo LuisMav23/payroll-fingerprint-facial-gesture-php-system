@@ -169,10 +169,9 @@ if (isset($_POST['submit'])) {
             <div class="register-logo register-title">
                 <a href="<?php echo BASE_URL; ?>" class="register-title">
                     <!-- <img src="../dist/img/logo.png" alt="Alar Logo"> -->
-                    <b class="payroll">Payroll</b> <span class="management"> Management </span>
+                    <b class="payroll">Employee Registration </b> <span class="management"> Form</span>
                 </a>
                 <br>
-                <small>Employee Registration Form</small>
             </div>
             <div class="form-group">
         </div>
