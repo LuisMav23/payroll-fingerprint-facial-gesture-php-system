@@ -6,6 +6,16 @@ if (!isset($_GET['emp_code']) || empty($_GET['emp_code']) || !isset($_GET['month
 	header('location:' . BASE_URL);
 }
 
+$currentDay = date('j');
+$cutoffFlag = 0;
+if ($currentDay >= 1 && $currentDay <= 15) {
+    $cutoffFlag = 0;
+} elseif ($currentDay >= 16 && $currentDay <= 30) {
+    $cutoffFlag = 1;
+}
+
+$currentCutoff = $cutoffFlag ? '30th': '15th';
+
 $empData = GetEmployeeDataByEmpCode($_GET['emp_code']);
 $month = $_GET['month'] . ', ' . $_GET['year'];
 $empLeave = GetEmployeeLWPDataByEmpCodeAndMonth($_GET['emp_code'], $month);
@@ -55,7 +65,7 @@ if ($checkSalarySQL) {
 
 		<div class="content-wrapper">
 			<section class="content-header">
-				<h1>Salary for <?php echo $month; ?></h1>
+				<h1>Salary for <?php echo $month; ?> - <?php echo $currentCutoff; ?> Day Cutoff </h1>
 				<ol class="breadcrumb">
 					<li><a href="<?php echo BASE_URL; ?>"><i class="fa fa-dashboard"></i> Home</a></li>
 					<li class="active">Salary for <?php echo $month; ?></li>
@@ -193,6 +203,7 @@ if ($checkSalarySQL) {
 																	style="margin:0">
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'deductions') { ?>
+																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Premium'){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
@@ -206,6 +217,21 @@ if ($checkSalarySQL) {
 																						class="form-control text-right" />
 																				</td>
 																			</tr>
+																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan')){ ?>
+																			<?php $totalDeductions += $head['default_salary']; ?>
+																			<tr>
+																				<td width="70%">
+																					<?php echo $head['payhead_name']; ?>
+																				</td>
+																				<td width="30%" class="text-right">
+																					<input type="hidden" name="deductions_heads[]"
+																						value="<?php echo $head['payhead_name']; ?>" />
+																					<input type="text" name="deductions_amounts[]"
+																						value="<?php echo number_format($head['default_salary'], 2, '.', ''); ?>"
+																						class="form-control text-right" />
+																				</td>
+																			</tr>
+																			<?php } ?>
 																		<?php } ?>
 																	<?php } ?>
 																</table>
