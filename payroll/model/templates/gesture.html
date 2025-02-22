@@ -150,22 +150,6 @@
           <strong>Attendance Status:</strong>
           <span class="text-red">{{ attendance_status }}</span>
         {% endif %}
-        <button
-          id="applyOvertimeBtn"
-          class="btn btn-primary mt-3"
-          onclick="applyForOvertime('{{ employee.emp_code }}')"
-          {%
-          if
-          attendance_status
-          !="Timed out"
-          %}
-          disabled
-          {%
-          endif
-          %}
-        >
-          Apply for Overtime
-        </button>
         {% else %}
         <p>Employee not found.</p>
         {% endif %}
@@ -213,29 +197,7 @@
         document.getElementById("loader").style.display = "none";
       }
     </script>
-
-    <script>
-      function applyForOvertime(empCode) {
-        fetch("/apply-overtime", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ emp_code: empCode }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.message) {
-              alert(data.message);
-            } else if (data.error) {
-              alert("Error: " + data.error);
-            }
-          })
-          .catch((error) => {
-            alert("Error applying for overtime: " + error);
-          });
-      }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
       let video;
@@ -313,10 +275,23 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.message) {
-              alert(data.message);
-              location.reload();
+              Swal.fire({
+                title: data.message,
+                icon: "success"
+              });
+              // add delay
+                setTimeout(() => {
+                window.location.href = "/start_recognition";
+              }, 3000);
             } else if (data.error) {
-              alert("Error: " + data.error); // Show error message
+              Swal.fire({
+                title: data.error,
+                icon: "error"
+              });
+              // add delay
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
             } // Reload the page after sending the gesture
           })
           .catch((error) => {

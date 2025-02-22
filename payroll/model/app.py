@@ -172,6 +172,7 @@ from datetime import datetime
 last_request_time = 0
 
 from datetime import datetime, timedelta
+from flask_cors import CORS
 
 
 @app.route("/gesture-check", methods=["POST"])
@@ -408,6 +409,7 @@ def capture():
 
     return jsonify({"status": "error", "message": "No image received."})
 
+CORS(app)
 
 if __name__ == "__main__":
     app.run(debug=True, host="localhost")

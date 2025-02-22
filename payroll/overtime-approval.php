@@ -87,7 +87,10 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 						<div class="box">
 							<div class="box-header">
 								<h3 class="box-title">All Overtime Requests</h3>
-							</div>
+								<button class="btn btn-primary pull-right" id="applyOvertime" onclick="applyForOvertime('<?php echo $_SESSION['Employee_Code']; ?>')">
+									Apply for Overtime
+								</button>
+							</div> 
 							<div class="box-body">
 								<table id="myovertimes" class="table table-bordered table-striped">
 									<thead>
@@ -125,8 +128,40 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 	<script src="<?php echo BASE_URL; ?>plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
 	<script src="<?php echo BASE_URL; ?>plugins/datepicker/bootstrap-datepicker.js"></script>
 	<script src="<?php echo BASE_URL; ?>dist/js/app.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script type="text/javascript">
 		var baseurl = '<?php echo BASE_URL; ?>';
+
+		function applyForOvertime(empCode) {
+        fetch("http://localhost:5000/apply-overtime", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ emp_code: empCode }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              Swal.fire({
+                title: data.message,
+                icon: "success"
+              });
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+            } else if (data.error) {
+              Swal.fire({
+                title: data.error,
+                icon: "error"
+              });
+              
+            }
+          })
+          .catch((error) => {
+            alert("Error applying for overtime: " + error);
+          });
+      }
 
 		$(document).ready(function () {
 			// Fetch all overtime requests

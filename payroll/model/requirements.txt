@@ -20,6 +20,7 @@ opencv-python
 opencv-python-headless
 packaging
 pandas
+flask_cors
 path==16.14.0
 path.py==12.5.0 
 pillow==10.4.0
