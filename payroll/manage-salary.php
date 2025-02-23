@@ -149,13 +149,13 @@ if ($checkSalarySQL) {
 																	style="margin:0">
 																	<?php
 																		$valid_designations = [
-																			'General Manager', 'Operation Manager', 'Account Staff', 
+																			'General Manager', 'Operation Manager', 'Accounting Staff', 
 																			'Finance Supervisor', 'HR Manager', 'Admin Officer', 'Liaison Officer'
 																		];
 																		$salary_mapping = [
 																			'General Manager' => 30000,
 																			'Operation Manager' => 30000,
-																			'Account Staff' => 26000,
+																			'Accounting Staff' => 26000,
 																			'Finance Supervisor' => 26000,
 																			'HR Manager' => 25000,
 																			'Admin Officer' => 25000,
@@ -179,7 +179,7 @@ if ($checkSalarySQL) {
 																			</tr>
 																		<?php 
 																		} else {
-																			$fixed_salary = $salary_mapping[$position] ?? 0;
+																			$fixed_salary = $salary_mapping[$position] / 2 ?? 0;
 																			$totalEarnings += $fixed_salary;
 																		?>
 																			<tr>
