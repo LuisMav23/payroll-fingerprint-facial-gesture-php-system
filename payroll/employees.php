@@ -329,25 +329,28 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<input type="text" class="form-control" name="department" id="department"
 											 /> -->
 											 <!-- Added Code - Andrie -->
-									<div class="form-group">
-										<label for="department" class="col-sm-4">Department</label>
+											 <div class="form-group">
+                        <label for="department" class="col-sm-4">Department</label>
 											<div class="col-sm-6">
-												<select class="form-control" id="department" name="department" required />
+												<select class="form-control" name="department" id="department" required>
 													<option value="">Please make a choice</option>
-													<option <?php echo $_POST['department'] == 'Operation' ? 'selected' : ''; ?>
-														value="Operation">Operation Department</option>
-													<option <?php echo $_POST['department'] == 'Admin' ? 'selected' : ''; ?>
-														value="Admin">Admin Department</option>
-													<option <?php echo $_POST['department'] == 'Billing' ? 'selected' : ''; ?>
-														value="Billing">Billing Department</option>
-													<option <?php echo $_POST['department'] == 'Warehouse' ? 'selected' : ''; ?>
-														value="Warehouse">Warehouse Department</option>
-													<option <?php echo $_POST['department'] == 'Accounting' ? 'selected' : ''; ?>
-														value="Accounting">Accounting Department</option>
+													<?php
+													$department = [
+														"Operation Department", "Admin Department", "Billing Department", "Warehouse Department", 
+                                                        "Accounting Department"
+													];
+
+													$selectedDepartment= $_POST['department'] ?? '';
+
+													foreach ($department as $department) {
+														$selected = ($selectedDepartment == $department) ? 'selected' : '';
+														echo "<option value=\"$department\" $selected>$department</option>";
+													}
+													?>
 												</select>
-												<?php echo $errors['department']; ?>
+												<?php echo $errors['department'] ?? ''; ?>
 											</div>
-										</div>
+                                         </div> 
 										<br><br>
 								<div class="form-group">
 								<!-- <div class="row"> -->

@@ -168,7 +168,8 @@ if (isset($_POST['submit'])) {
         <div class="register-box">
             <div class="register-logo register-title">
                 <a href="<?php echo BASE_URL; ?>" class="register-title">
-                    <!-- <img src="../dist/img/logo.png" alt="Alar Logo"> -->
+                <!-- Added Code - Andrie -->
+                    <img src="../dist/img/alar-logo.png" alt="Alar Logo">
                     <b class="payroll">Employee Registration </b> <span class="management"> Form</span>
                 </a>
                 <br>
@@ -332,6 +333,34 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
                     <hr />
+                    <div class="form-group">
+									<!-- <div class="col-sm-4">
+										<label for="department">Department</label>
+										<input type="text" class="form-control" name="department" id="department"
+											 /> -->
+											 <!-- Added Code - Andrie -->
+                        <div class="form-group">
+                        <label for="department" class="col-sm-2 control-label">Department</label>
+											<div class="col-sm-10">
+												<select class="form-control" name="department" id="department" required>
+													<option value="">Please make a choice</option>
+													<?php
+													$department = [
+														"Operation Department", "Admin Department", "Billing Department", "Warehouse Department", 
+                                                        "Accounting Department"
+													];
+
+													$selectedDepartment= $_POST['department'] ?? '';
+
+													foreach ($department as $department) {
+														$selected = ($selectedDepartment == $department) ? 'selected' : '';
+														echo "<option value=\"$department\" $selected>$department</option>";
+													}
+													?>
+												</select>
+												<?php echo $errors['department'] ?? ''; ?>
+											</div>
+                                         </div> 
                         <div class="form-group">
                         <label for="designation" class="col-sm-2 control-label">Position</label>
 											<div class="col-sm-10">
