@@ -363,8 +363,8 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 													<option value="">Please make a choice</option>
 													<?php
 													$designations = [
-														"Collectors", "Drivers", "Pesticide Handler", "Liaison Officer",
-														"Office Staff", "Supervisor/Team", "General Manager",
+														"Collectors", "Drivers", "Pesticide Handler", "Operation Technician", 
+                                                        "Liaison Officer", "Billing Officer", "Supervisor/Team", "General Manager",
 														"Operation Manager", "HR Manager", "Finance Supervisor",
 														"Admin Officer", "Accounting Staff"
 													];
