@@ -439,6 +439,74 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 	<script src="<?php echo BASE_URL; ?>dist/js/app.min.js"></script>
 	<script type="text/javascript">var baseurl = '<?php echo BASE_URL; ?>';</script>
 	<script src="<?php echo BASE_URL; ?>dist/js/script.js?rand=<?php echo rand(); ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+	$(document).ready(function () {
+		var emp_table = $('#employees').DataTable();
+
+		$('#employees tbody').on('click', '.deleteEmp', function (e) {
+		  e.preventDefault()
+		  Swal.fire({
+			title: 'Are you sure?',
+			text: 'You won\'t be able to revert this!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!'
+		  }).then((result) => {
+			if (result.isConfirmed) {
+				var data = emp_table.row($(this).parents('tr')).data()
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          async: true,
+          cache: false,
+          url: baseurl + 'ajax/?case=DeleteEmployeeByID',
+          data: 'emp_code=' + data[0],
+          success: function (result) {
+            if (result.code == 0) {
+              $.notify(
+                {
+                  icon: 'glyphicon glyphicon-ok-circle',
+                  message: result.result
+                },
+                {
+                  allow_dismiss: false,
+                  type: 'success',
+                  placement: {
+                    from: 'top',
+                    align: 'right'
+                  },
+                  z_index: 9999
+                }
+              )
+              emp_table.ajax.reload(null, false)
+            } else {
+              $.notify(
+                {
+                  icon: 'glyphicon glyphicon-remove-circle',
+                  message: result.result
+                },
+                {
+                  allow_dismiss: false,
+                  type: 'danger',
+                  placement: {
+                    from: 'top',
+                    align: 'right'
+                  },
+                  z_index: 9999
+                }
+              )
+            }
+          }
+        })
+			}
+		  })
+		})
+	})
+	</script>
+
 	<script>
 		document.getElementById('download-employee').addEventListener('click', function () {
 			var table = document.getElementById('employees');

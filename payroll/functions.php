@@ -320,14 +320,14 @@ function GetEmployeeLateDeductionByEmpcodeAndMonth($EmpCode, $month, $cutoff){
     if ($lateResult && mysqli_num_rows($lateResult) > 0) {
         while ($attendanceData = mysqli_fetch_assoc($lateResult)){
             $actionTime = strtotime($attendanceData['action_time']);
-            $scheduledTime = strtotime('08:00:00'); 
+            $scheduledTime = strtotime('07:00:00'); 
             $lateMinutes = ($actionTime - $scheduledTime) / 60; // 12:00:00 - 08:00:00 = 4 hours
 
             if ($lateMinutes > 15) {
                 if ($lateMinutes > 15 && $lateMinutes <= 30) {
                     $lateMinutes = 60; // Round up to 1 hour if between 8:15 and 8:30
                 } else {
-                    $lateMinutes = ceil(($lateMinutes - 15) / 60) * 60; // Round off to the nearest hour
+                    $lateMinutes = floor(($lateMinutes - 15) / 60) * 60; // Round down to the nearest hour
                 }
                 $totalLateDeduction += ($lateMinutes / 60) * 70; // P70 per hour
                 $totalLateDeduction = round($totalLateDeduction, 2); // Round to 2 decimal places

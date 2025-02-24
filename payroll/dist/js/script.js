@@ -360,58 +360,58 @@ $(document).ready(function () {
     /* End of Script */
 
     /* Delete Employee Script Start */
-    $('#employees tbody').on('click', '.deleteEmp', function (e) {
-      e.preventDefault()
+    // $('#employees tbody').on('click', '.deleteEmp', function (e) {
+    //   e.preventDefault()
 
-      var conf = confirm('Are you sure you want to delete this employee?')
-      if (conf) {
-        var data = emp_table.row($(this).parents('tr')).data()
-        $.ajax({
-          type: 'POST',
-          dataType: 'json',
-          async: true,
-          cache: false,
-          url: baseurl + 'ajax/?case=DeleteEmployeeByID',
-          data: 'emp_code=' + data[0],
-          success: function (result) {
-            if (result.code == 0) {
-              $.notify(
-                {
-                  icon: 'glyphicon glyphicon-ok-circle',
-                  message: result.result
-                },
-                {
-                  allow_dismiss: false,
-                  type: 'success',
-                  placement: {
-                    from: 'top',
-                    align: 'right'
-                  },
-                  z_index: 9999
-                }
-              )
-              emp_table.ajax.reload(null, false)
-            } else {
-              $.notify(
-                {
-                  icon: 'glyphicon glyphicon-remove-circle',
-                  message: result.result
-                },
-                {
-                  allow_dismiss: false,
-                  type: 'danger',
-                  placement: {
-                    from: 'top',
-                    align: 'right'
-                  },
-                  z_index: 9999
-                }
-              )
-            }
-          }
-        })
-      }
-    })
+    //   var conf = confirm('Are you sure you want to delete this employee?')
+    //   if (conf) {
+    //     var data = emp_table.row($(this).parents('tr')).data()
+    //     $.ajax({
+    //       type: 'POST',
+    //       dataType: 'json',
+    //       async: true,
+    //       cache: false,
+    //       url: baseurl + 'ajax/?case=DeleteEmployeeByID',
+    //       data: 'emp_code=' + data[0],
+    //       success: function (result) {
+    //         if (result.code == 0) {
+    //           $.notify(
+    //             {
+    //               icon: 'glyphicon glyphicon-ok-circle',
+    //               message: result.result
+    //             },
+    //             {
+    //               allow_dismiss: false,
+    //               type: 'success',
+    //               placement: {
+    //                 from: 'top',
+    //                 align: 'right'
+    //               },
+    //               z_index: 9999
+    //             }
+    //           )
+    //           emp_table.ajax.reload(null, false)
+    //         } else {
+    //           $.notify(
+    //             {
+    //               icon: 'glyphicon glyphicon-remove-circle',
+    //               message: result.result
+    //             },
+    //             {
+    //               allow_dismiss: false,
+    //               type: 'danger',
+    //               placement: {
+    //                 from: 'top',
+    //                 align: 'right'
+    //               },
+    //               z_index: 9999
+    //             }
+    //           )
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
     /* End of Script */
 
     /* Add Payhead To Employee Script Start */
