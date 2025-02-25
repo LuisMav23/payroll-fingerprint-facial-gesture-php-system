@@ -252,7 +252,7 @@ if ($checkSalarySQL) {
 																	</tr>
 																	<?php
 																		if ($cutoffFlag == 1){
-																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions + GetPreviousCutoffTotalEarnigns($empData['emp_code'], $month););
+																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions + GetPreviousCutoffTotalEarnigns($empData['emp_code'], $month));
 																		$totalDeductions += $withholdingTax; 
 																	?>
 																	<tr>
