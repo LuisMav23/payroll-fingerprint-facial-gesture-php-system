@@ -252,6 +252,25 @@ function GetOvertimeHoursByEmpCodeAndMonth($EmpCode, $month, $cutoff){
     return $overtimeEarnings;
 }
 
+
+function GetPreviousCutoffTotalEarnigns($EmpCode, $month) {
+    global $db;
+    // Possible output of this code:
+    // If $dateTime is an instance of DateTime set to January 15, 2023, the output would be:
+    // $formattedMonth = '2023-01';
+    // SELECT net_salary FROM wy_salaries WHERE `emp_code` = 'WY03' AND pay_month = 'February, 2025' AND cutoff = 0 LIMIT 1;
+    $pastMonthQuery = "
+        SELECT net_salary
+        FROM " . DB_PREFIX . "salaries 
+        WHERE `emp_code` = '$EmpCode' 
+        AND pay_month = '$month' 
+        AND cutoff = 0
+        LIMIT 1";
+    $pastMonthResult = mysqli_query($db, $pastMonthQuery);
+    $pastMonthData = mysqli_fetch_assoc($pastMonthResult);
+    return $pastMonthData['net_salary'] ?? 0;
+}
+
 function GetEmployeeAttendanceBasedSalaryByEmpcodeAndMonth($EmpCode, $month, $cutoff){
     global $db;
 
@@ -368,6 +387,8 @@ function GetEmployeeSalaryByEmpCodeAndMonth($EmpCode, $month, $cutoff)
     }
     return $salaryData;
 }
+
+
 
 function TotalSundaysAndSaturdays($month, $year)
 {

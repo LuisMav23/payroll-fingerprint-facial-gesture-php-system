@@ -78,6 +78,7 @@ if ($checkSalarySQL) {
 					<div class="col-xs-12">
 						<div class="box">
 							<div class="box-body">
+							
 								<?php if ($flag == 0) { ?>
 									<form method="POST" role="form" id="payslip-form">
 										<input type="hidden" name="emp_code" value="<?php echo $empData['emp_code']; ?>" />
@@ -251,7 +252,7 @@ if ($checkSalarySQL) {
 																	</tr>
 																	<?php
 																		if ($cutoffFlag == 1){
-																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions);
+																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions + GetPreviousCutoffTotalEarnigns($empData['emp_code'], $month););
 																		$totalDeductions += $withholdingTax; 
 																	?>
 																	<tr>
