@@ -321,6 +321,22 @@ function GetEmployeeLateDeductionByEmpcodeAndMonth($EmpCode, $month, $cutoff){
     return $totalLateDeduction;
 }
 
+function calculateWithholdingTax($salary) {
+    if ($salary <= 20833) {
+        return 0.00;
+    } elseif ($salary <= 33332) {
+        return 0.15 * ($salary - 20833);
+    } elseif ($salary <= 66666) {
+        return 2500 + 0.20 * ($salary - 33333);
+    } elseif ($salary <= 166666) {
+        return 10833.33 + 0.25 * ($salary - 66667);
+    } elseif ($salary <= 666666) {
+        return 40833.33 + 0.30 * ($salary - 166667);
+    } else {
+        return 200833.33 + 0.35 * ($salary - 666667);
+    }
+}
+
 function GetEmployeeSalaryByEmpCodeAndMonth($EmpCode, $month, $cutoff)
 {
     global $db;

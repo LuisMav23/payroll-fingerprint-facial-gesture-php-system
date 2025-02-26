@@ -219,9 +219,26 @@ if ($checkSalarySQL) {
 																				class="form-control text-right" />
 																		</td>
 																	</tr>
+																	<?php
+																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions);
+																		$totalDeductions += $withholdingTax; 
+																	?>
+																	<tr>
+																		<td width="70%">
+																			Withholding Tax
+																		</td>
+																		<td width="30%" class="text-right">
+																			<input type="hidden" name="deductions_heads[]"
+																				value="Withholding Tax" />
+																			<input type="text" name="deductions_amounts[]"
+																				value="<?php echo number_format($withholdingTax, 2, '.', ''); ?>"
+																				class="form-control text-right" />
+																		</td>
+																	</tr>
+																	
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'deductions') { ?>
-																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Premium'){ ?>
+																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Contribution'){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
@@ -235,7 +252,7 @@ if ($checkSalarySQL) {
 																						class="form-control text-right" />
 																				</td>
 																			</tr>
-																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan')){ ?>
+																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan' || $head['payhead_name'] == 'Philhealth Contribution' || $head['payhead_name'] == 'Withholding Tax')){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
