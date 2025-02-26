@@ -22,9 +22,10 @@ $empLeave = GetEmployeeLWPDataByEmpCodeAndMonth($_GET['emp_code'], $month);
 $flag = 0;
 $totalEarnings = 0;
 $totalDeductions = 0;
-$checkSalarySQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "salaries` WHERE `emp_code` = '" . $empData['emp_code'] . "' AND `pay_month` = '$month'");
+$checkSalarySQL = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "salaries` WHERE `emp_code` = '" . $empData['emp_code'] . "' AND `pay_month` = '$month' AND `cutoff` = '$cutoffFlag'");
 if ($checkSalarySQL) {
 	$checkSalaryROW = mysqli_num_rows($checkSalarySQL);
+
 	if ($checkSalaryROW > 0) {
 		$flag = 1;
 		$empSalary = GetEmployeeSalaryByEmpCodeAndMonth($_GET['emp_code'], $month);
@@ -81,6 +82,7 @@ if ($checkSalarySQL) {
 									<form method="POST" role="form" id="payslip-form">
 										<input type="hidden" name="emp_code" value="<?php echo $empData['emp_code']; ?>" />
 										<input type="hidden" name="pay_month" value="<?php echo $month; ?>" />
+										<input type="hidden" name="cutoff" value="<?php echo $cutoffFlag; ?>" />
 										<div class="table-responsive">
 											<table class="table table-bordered">
 												<tr>

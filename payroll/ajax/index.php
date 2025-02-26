@@ -1201,6 +1201,7 @@ function GeneratePaySlip()
 	$earnings_amounts = $_POST['earnings_amounts'];
 	$deductions_heads = $_POST['deductions_heads'];
 	$deductions_amounts = $_POST['deductions_amounts'];
+	$cutoff = $_POST['cutoff'];
 
 	if (!empty($emp_code) && !empty($pay_month)) {
 		try {
@@ -1208,7 +1209,7 @@ function GeneratePaySlip()
 			for ($i = 0; $i < count($earnings_heads); $i++) {
 				$earnings_head = mysqli_real_escape_string($db, $earnings_heads[$i]);
 				$earnings_amount = number_format($earnings_amounts[$i], 2, '.', '');
-				$checkSalSQL = mysqli_query($db, "SELECT * FROM " . DB_PREFIX . "salaries WHERE emp_code = '$emp_code' AND payhead_name = '$earnings_head' AND pay_month = '$pay_month' AND pay_type = 'earnings' LIMIT 0, 1");
+				$checkSalSQL = mysqli_query($db, "SELECT * FROM " . DB_PREFIX . "salaries WHERE emp_code = '$emp_code' AND payhead_name = '$earnings_head' AND pay_month = '$pay_month' AND pay_type = 'earnings' AND `cutoff` = ". $cutoff ." LIMIT 0, 1");
 
 				if (!$checkSalSQL) {
 					$errorMessages[] = 'Error checking earnings: ' . mysqli_error($db);
@@ -1225,7 +1226,7 @@ function GeneratePaySlip()
 			for ($i = 0; $i < count($deductions_heads); $i++) {
 				$deductions_head = mysqli_real_escape_string($db, $deductions_heads[$i]);
 				$deductions_amount = number_format($deductions_amounts[$i], 2, '.', '');
-				$checkSalSQL = mysqli_query($db, "SELECT * FROM " . DB_PREFIX . "salaries WHERE emp_code = '$emp_code' AND payhead_name = '$deductions_head' AND pay_month = '$pay_month' AND pay_type = 'deductions' LIMIT 0, 1");
+				$checkSalSQL = mysqli_query($db, "SELECT * FROM " . DB_PREFIX . "salaries WHERE emp_code = '$emp_code' AND payhead_name = '$deductions_head' AND pay_month = '$pay_month' AND pay_type = 'deductions' AND `cutoff` = ". $cutoff ." LIMIT 0, 1");
 
 				if (!$checkSalSQL) {
 					$errorMessages[] = 'Error checking deductions: ' . mysqli_error($db);
