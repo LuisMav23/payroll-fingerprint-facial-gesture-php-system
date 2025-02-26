@@ -220,6 +220,7 @@ if ($checkSalarySQL) {
 																		</td>
 																	</tr>
 																	<?php
+																		if ($cutoffFlag == 1){
 																		$withholdingTax = calculateWithholdingTax($totalEarnings - $totalDeductions);
 																		$totalDeductions += $withholdingTax; 
 																	?>
@@ -235,7 +236,7 @@ if ($checkSalarySQL) {
 																				class="form-control text-right" />
 																		</td>
 																	</tr>
-																	
+																	<?php } ?>
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'deductions') { ?>
 																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Contribution'){ ?>
