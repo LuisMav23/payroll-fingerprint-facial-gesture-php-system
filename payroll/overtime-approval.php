@@ -173,6 +173,7 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 						if (response.data) {
 							$('#allovertime tbody').empty();
 							response.data.forEach(record => {
+								const isPending = record[4].toLowerCase() === 'pending';
 								const row = `
 									<tr>
 										<td>${record[0]}</td>
@@ -181,10 +182,10 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 										<td>${record[3]}</td>
 										<td>${record[4]}</td>
 										<td>
-											<button class="btn btn-primary approveovertime" data-overtimeid="${record[5]}">
+											<button class="btn btn-primary approveovertime" data-overtimeid="${record[5]}" ${isPending ? '' : 'disabled'}>
 												Approve
 											</button>
-											<button class="btn btn-danger rejectovertime" data-overtimeid="${record[5]}">
+											<button class="btn btn-danger rejectovertime" data-overtimeid="${record[5]}" ${isPending ? '' : 'disabled'}>
 												Reject
 											</button>
 										</td>
@@ -256,6 +257,15 @@ if (!isset($_SESSION['Admin_ID']) || !isset($_SESSION['Login_Type'])) {
 						console.error('Error fetching overtime data:', error);
 					}
 				});
+				const designation = "<?php echo getEmployeeDesignationByEmpCode($_SESSION['Employee_Code'])?>";
+				console.log(designation);
+				const invalidDesignations = ['General Manager', 'Operation Manager', 'Accounting Staff', 'Finance Supervisor', 'HR Manager', 'Admin Officer', 'Liaison Officer'];
+				<?php $today = date('Y-m-d'); ?>
+				const isAppliedOvertime = <?php echo verifyIfEmployeeFiledOvertime($_SESSION['Employee_Code'], $today) ? 'true' : 'false'; ?>;
+				console.log(isAppliedOvertime);
+				if (invalidDesignations.includes(designation) || isAppliedOvertime) {
+					$('#applyOvertime').prop('disabled', true).addClass('disabled');
+				}
 			}
 			// $.ajax({
 			// 	url: baseurl + 'ajax/?case=GetAllOvertimes',

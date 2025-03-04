@@ -356,6 +356,38 @@ function GetEmployeeLateDeductionByEmpcodeAndMonth($EmpCode, $month, $cutoff){
     return $totalLateDeduction;
 }
 
+function getEmployeeDesignationByEmpCode($empcode){
+    global $db;
+    $designation = '';
+    $query = mysqli_query($db, "SELECT `designation` FROM `" . DB_PREFIX . "employees` WHERE `emp_code` = '$empcode' LIMIT 1");
+    if ($query) {
+        if (mysqli_num_rows($query) == 1) {
+            $data = mysqli_fetch_assoc($query);
+            $designation = $data['designation'];
+        }
+    }
+    return $designation;
+}
+function verifyIfEmployeeFiledOvertime($empcode, $date){
+    global $db;
+    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "overtimes` WHERE `emp_code` = '$empcode' AND `overtime_date` = '$date'");
+    if ($query) {
+        if (mysqli_num_rows($query) > 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function countLeavesPerYear($empcode, $year){
+    global $db;
+    $query = mysqli_query($db, "SELECT * FROM `" . DB_PREFIX . "leaves` WHERE `emp_code` = '$empcode' AND YEAR(`apply_date`) = '$year'");
+    if ($query) {
+        return mysqli_num_rows($query);
+    }
+    return 0;
+}
+
 function calculateWithholdingTax($salary) {
     if ($salary <= 20833) {
         return 0.00;

@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<input type="file" class="form-control" name="leave_attachment" id="leave_attachment" accept=".pdf,.doc,.docx,.jpg,.png">
 									</div>
 									<div class="form-group">
-										<button type="submit" class="btn btn-primary">Apply for Leave</button>
+										<button type="submit" class="btn btn-primary" id="submitLeaveApplication">Apply for Leave</button>
 									</div>
 								</form>
 
@@ -198,7 +198,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						<div class="col-lg-8">
 							<div class="box">
 								<div class="box-header">
-									<h3 class="box-title">My Leaves</h3>
+								<?php $currYear = date("Y"); ?>
+								<?php $leaveCount = countLeavesPerYear($_SESSION['Employee_Code'], $currYear); ?>
+									<h3 class="box-title">My Leaves (<?php echo $leaveCount?>/8)</h3>
 								</div>
 								<div class="box-body">
 									<table id="myleaves" class="table table-bordered table-stripe">
@@ -240,6 +242,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	<script>
 		$(document).ready(function () {
+
+			const leaveCount = <?php echo $leaveCount ?>;
+			console.log(leaveCount);
+			if (leaveCount >= 8) {
+				$.notify({
+					message: "You have already taken " + leaveCount + " leaves this year."
+				}, {
+					type: "warning",
+					placement: {
+						from: "top",
+						align: "right"
+					},
+					delay: 3000,
+					timer: 1000
+				});
+				$("#submitLeaveApplication").prop("disabled", true);
+			}
+
 			$("#leave-form").submit(function (e) {
 				e.preventDefault(); // Prevent default form submission
 
