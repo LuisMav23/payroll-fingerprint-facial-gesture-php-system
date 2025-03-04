@@ -290,11 +290,24 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 									<div class="col-sm-4">
 										<label for="identity_doc">Identity Document</label>
 										<select class="form-control" name="identity_doc" id="identity_doc" required>
-											<option value="">Please make a choice</option>
+											<!-- <option value="">Please make a choice</option>
 											<option value="Voter Id">Voter Id</option>
-											<option value="National Card">National ID Card</option>
+											<option value="National ID Card">National ID Card</option>
 											<option value="Driving License">Driving License</option>
-											<option value="Passport">Passport</option>
+											<option value="Passport">Passport</option> -->
+										<?php
+													$identity_doc = [
+														"Voter ID", "National ID Card", "Driving License", "Passport"
+													];
+
+													$selectedIdentityDoc= $_POST['identity_doc'] ?? '';
+
+													foreach ($identity_doc as $identity_doc) {
+														$selected = ($selectedDepartment == $identity_doc) ? 'selected' : '';
+														echo "<option value=\"$identity_doc\" $selected>$identity_doc</option>";
+													}
+													?>
+												<?php echo $errors['identity_doc'] ?? ''; ?>
 										</select>
 									</div>
 								</div>
@@ -323,34 +336,29 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 									</div>
 								</div>
 							</div>
-								<div class="form-group">
-									<!-- <div class="col-sm-4">
-										<label for="department">Department</label>
-										<input type="text" class="form-control" name="department" id="department"
-											 /> -->
-											 <!-- Added Code - Andrie -->
-											 <div class="form-group">
-                        <label for="department" class="col-sm-4">Department</label>
-											<div class="col-sm-6">
-												<select class="form-control" name="department" id="department" required>
-													<option value="">Please make a choice</option>
-													<?php
-													$department = [
-														"Operation Department", "Admin Department", "Billing Department", "Warehouse Department", 
-                                                        "Accounting Department"
-													];
+							<br>
+						<div class="form-group">
+                        <label for="department" class="col-sm-2 control-label">Department</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="department" id="department" required>
+                                    <option value="">Please make a choice</option>
+                                    <?php
+                                    $departments = [
+                                        "Operation Department", "Admin Department", "Billing Department", "Warehouse Department",
+                                        "Accounting Department"
+                                    ];
 
-													$selectedDepartment= $_POST['department'] ?? '';
+                                    $selectedDepartment = $_POST['department'] ?? '';
 
-													foreach ($department as $department) {
-														$selected = ($selectedDepartment == $department) ? 'selected' : '';
-														echo "<option value=\"$department\" $selected>$department</option>";
-													}
-													?>
-												</select>
-												<?php echo $errors['department'] ?? ''; ?>
-											</div>
-                                         </div> 
+                                    foreach ($departments as $department) {
+                                        $selected = ($selectedDepartment == $department) ? 'selected' : '';
+                                        echo "<option value=\"$department\" $selected>$department</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <?php echo $errors['department'] ?? ''; ?>
+                            </div>
+                        </div>
 										<br><br>
 								<div class="form-group">
 								<!-- <div class="row"> -->
@@ -359,31 +367,43 @@ if (!isset($_SESSION['Admin_ID']) || $_SESSION['Login_Type'] != 'admin') {
 										<input type="text" class="form-control" name="designation" id="designation"
 											 /> -->
 											 <!-- Added Code - Andrie -->
-								<div class="form-group">
-											<label for="designation" class="col-sm-4">Position</label>
-											<div class="col-sm-6">
-												<select class="form-control" name="designation" id="designation" required>
-													<option value="">Please make a choice</option>
-													<?php
-													$designations = [
-														"Collectors", "Drivers", "Pesticide Handler", "Operation Technician", 
-                                                        "Liaison Officer", "Billing Officer", "Supervisor/Team", "General Manager",
-														"Operation Manager", "HR Manager", "Finance Supervisor",
-														"Admin Officer", "Accounting Staff"
-													];
+											 <div class="form-group">
+                            <label for="designation" class="col-sm-2 control-label">Position</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="designation" id="designation" required>
+                                    <option value="">Please make a choice</option>
+                                </select>
+                                <?php echo $errors['designation'] ?? ''; ?>
+                            </div>
+                        </div>
 
-													$selectedDesignation = $_POST['designation'] ?? '';
+                        <script>
+                            const departmentDesignations = {
+                                "Operation Department": ["Collectors", "Drivers", "Pesticide Handler", "Operation Technician"],
+                                "Admin Department": ["Liaison Officer", "Admin Officer", "HR Manager"],
+                                "Billing Department": ["Billing Officer"],
+                                "Warehouse Department": ["Supervisor/Team"],
+                                "Accounting Department": ["General Manager", "Operation Manager", "Finance Supervisor", "Accounting Staff"]
+                            };
 
-													foreach ($designations as $designation) {
-														$selected = ($selectedDesignation == $designation) ? 'selected' : '';
-														echo "<option value=\"$designation\" $selected>$designation</option>";
-													}
-													?>
-												</select>
-												<?php echo $errors['designation'] ?? ''; ?>
-											</div>
-										</div>
-										<br><br>
+                            document.getElementById("department").addEventListener("change", function () {
+                                const department = this.value;
+                                const designationSelect = document.getElementById("designation");
+
+                                designationSelect.innerHTML = '<option value="">Please make a choice</option>'; // Reset options
+
+                                if (departmentDesignations[department]) {
+                                    departmentDesignations[department].forEach(function (designation) {
+                                        let option = document.createElement("option");
+                                        option.value = designation;
+                                        option.textContent = designation;
+                                        designationSelect.appendChild(option);
+                                    });
+                                }
+                            });
+                        </script>
+						<div>
+							<br>
 									<!-- <div class="col-sm-4">
 										<label for="pan_no">PAN No.</label>
 										<input type="text" class="form-control" name="pan_no" id="pan_no" required />

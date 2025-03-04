@@ -293,7 +293,7 @@ $(document).ready(function () {
     })
     /* End of Script */
 
-    /* Delete Employee Script Start */
+    /* Edit Employee Script Start */
     $('#employees tbody').on('click', '.editEmp', function (e) {
       e.preventDefault()
 
