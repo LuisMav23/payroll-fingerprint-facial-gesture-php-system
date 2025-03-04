@@ -33,6 +33,9 @@ if (isset($_POST['submit'])) {
         $errors['designation'] = '<span class="text-danger">Please enter your designation!</span>';
     }
 
+    if (empty($_POST['department'])) {
+        $errors['department'] = '<span class="text-danger">Please enter your designation!</span>';
+    }
 
     if (empty($_POST['first_name'])) {
         $errors['first_name'] = '<span class="text-danger">Please enter your first name!</span>';
@@ -108,8 +111,8 @@ if (isset($_POST['submit'])) {
         if (move_uploaded_file($file_tmp, $target_dir . $photocopy)) {
 
             extract($_POST);
-            $insertSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "employees`(`emp_code`, `first_name`, `last_name`, `dob`, `gender`, `merital_status`, `nationality`, `address`, `city`, `state`, `country`, `email`, `mobile`, `telephone`, `identity_doc`, `identity_no`, `emp_type`, `joining_date`, `blood_group`, `emp_password`, `designation`, `photo`, `created`) 
-            VALUES ('$curEmpID', '$first_name', '$last_name', '$dob', '$gender', '$merital_status', '$nationality', '$address', '$city', '$state', '$country', '$email', '$mobile', '$telephone', '$identification', '$id_no', '$employment_type', '$joining_date', '$bloodgrp', '" . sha1($emp_password) . "', '$designation', '$photocopy', NOW())");
+            $insertSQL = mysqli_query($db, "INSERT INTO `" . DB_PREFIX . "employees`(`emp_code`, `first_name`, `last_name`, `dob`, `gender`, `merital_status`, `nationality`, `address`, `city`, `state`, `country`, `email`, `mobile`, `telephone`, `identity_doc`, `identity_no`, `emp_type`, `joining_date`, `blood_group`, `emp_password`, `department`, `designation`, `photo`, `created`) 
+            VALUES ('$curEmpID', '$first_name', '$last_name', '$dob', '$gender', '$merital_status', '$nationality', '$address', '$city', '$state', '$country', '$email', '$mobile', '$telephone', '$identification', '$id_no', '$employment_type', '$joining_date', '$bloodgrp', '" . sha1($emp_password) . "', '$department', '$designation', '$photocopy', NOW())");
 
             $_SESSION['success'] = '<p class="text-center"><span class="text-success">Employee registration successfully!</span></p>';
             echo "<script>alert('Registration Success');window.location.href='newreg.php'</script>";
@@ -309,7 +312,7 @@ if (isset($_POST['submit'])) {
                     </div>
                     <div class="form-group">
                         <label for="identification" class="col-sm-2 control-label">Identification</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <select class="form-control" id="identification" name="identification" required>
                                 <option value="">Please make a choice</option>
                                 <option <?php echo $_POST['identification'] == 'Voter ID' ? 'selected' : ''; ?>
@@ -339,7 +342,7 @@ if (isset($_POST['submit'])) {
 										<input type="text" class="form-control" name="department" id="department"
 											 /> -->
 											 <!-- Added Code - Andrie -->
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                         <label for="department" class="col-sm-2 control-label">Department</label>
 											<div class="col-sm-10">
 												<select class="form-control" name="department" id="department" required>
@@ -384,10 +387,68 @@ if (isset($_POST['submit'])) {
 												</select>
 												<?php echo $errors['designation'] ?? ''; ?>
 											</div>
+                        </div> -->
+                    <div class="form-group">
+                        <label for="department" class="col-sm-2 control-label">Department</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="department" id="department" required>
+                                    <option value="">Please make a choice</option>
+                                    <?php
+                                    $departments = [
+                                        "Operation Department", "Admin Department", "Billing Department", "Warehouse Department",
+                                        "Accounting Department"
+                                    ];
+
+                                    $selectedDepartment = $_POST['department'] ?? '';
+
+                                    foreach ($departments as $department) {
+                                        $selected = ($selectedDepartment == $department) ? 'selected' : '';
+                                        echo "<option value=\"$department\" $selected>$department</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <?php echo $errors['department'] ?? ''; ?>
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <label for="designation" class="col-sm-2 control-label">Position</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="designation" id="designation" required>
+                                    <option value="">Please make a choice</option>
+                                </select>
+                                <?php echo $errors['designation'] ?? ''; ?>
+                            </div>
+                        </div>
+
+                        <script>
+                            const departmentDesignations = {
+                                "Operation Department": ["Collectors", "Drivers", "Pesticide Handler", "Operation Technician"],
+                                "Admin Department": ["Liaison Officer", "Admin Officer", "HR Manager"],
+                                "Billing Department": ["Billing Officer"],
+                                "Warehouse Department": ["Supervisor/Team"],
+                                "Accounting Department": ["General Manager", "Operation Manager", "Finance Supervisor", "Accounting Staff"]
+                            };
+
+                            document.getElementById("department").addEventListener("change", function () {
+                                const department = this.value;
+                                const designationSelect = document.getElementById("designation");
+
+                                designationSelect.innerHTML = '<option value="">Please make a choice</option>'; // Reset options
+
+                                if (departmentDesignations[department]) {
+                                    departmentDesignations[department].forEach(function (designation) {
+                                        let option = document.createElement("option");
+                                        option.value = designation;
+                                        option.textContent = designation;
+                                        designationSelect.appendChild(option);
+                                    });
+                                }
+                            });
+                        </script>
                     <div class="form-group">
                         <label for="employment_type" class="col-sm-2 control-label">Employee Type</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <select class="form-control" id="employment_type" name="employment_type">
                                 <option value="">Please make a choice</option>
                                 <option <?php echo $_POST['employment_type'] == 'Part-time employee' ? 'selected' : ''; ?>
@@ -425,7 +486,7 @@ if (isset($_POST['submit'])) {
                     </div>
                     <div class="form-group">
                         <label for="photo" class="col-sm-2 control-label">Photograph</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <input type="file" class="form-control" id="photo" name="photo" accept="image/*"
                                 placeholder="Photograph" required style="height:auto" />
                             <?php echo $errors['photo']; ?>

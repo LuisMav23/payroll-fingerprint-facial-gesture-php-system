@@ -30,6 +30,9 @@ switch ($case) {
 	case 'LoadingAttendanceByEmpCode':
 		LoadingAttendanceByEmpCode();
 		break;
+	case 'LoadingAttendanceByDate';
+		LoadingAttendanceByDate();
+		break;
 	case 'LoadingAttendanceByEmpId':
 		LoadingAttendanceByEmpId();
 		break;
@@ -458,19 +461,22 @@ function LoadingAttendanceByEmpCode()
     echo json_encode(['data' => $data]);
 }
 
+// Test code
 function LoadingAttendanceByEmpId()
 {
     global $db;
 
-    // Validate and sanitize emp_code to prevent SQL injection
-    if (!isset($_GET['emp_id'])) {
-        echo json_encode(['error' => 'Employee id is required']);
+    if (!isset($_GET['emp_code'])) {
+        echo json_encode(['error' => 'Employee code is required']);
         return;
     }
 
-    $emp_id = mysqli_real_escape_string($db, $_GET['emp_id']);
+    $emp_code = mysqli_real_escape_string($db, $_GET['emp_code']);
+    $selectedDate = isset($_GET['date']) ? mysqli_real_escape_string($db, $_GET['date']) : '';
+    $selectedMonth = isset($_GET['month']) ? mysqli_real_escape_string($db, $_GET['month']) : '';
+    $selectedYear = isset($_GET['year']) ? mysqli_real_escape_string($db, $_GET['year']) : '';
 
-    // SQL query to fetch attendance records
+    // Base SQL query
     $sql = "SELECT 
                 `att`.`attendance_date`, 
                 `emp`.`emp_code`, 
@@ -481,8 +487,20 @@ function LoadingAttendanceByEmpId()
             FROM `" . DB_PREFIX . "attendance` AS `att`
             JOIN `" . DB_PREFIX . "employees` AS `emp` 
                 ON `emp`.`emp_code` = `att`.`emp_code`
-            WHERE `emp`.`emp_id` = '$emp_id'
-            ORDER BY `att`.`attendance_date`, `att`.`action_time`";
+            WHERE `emp`.`emp_code` = '$emp_code'";
+
+    // Apply filters if provided
+    if (!empty($selectedDate)) {
+        $sql .= " AND DATE(`att`.`attendance_date`) = '$selectedDate'";
+    }
+    if (!empty($selectedMonth)) {
+        $sql .= " AND MONTH(`att`.`attendance_date`) = '$selectedMonth'";
+    }
+    if (!empty($selectedYear)) {
+        $sql .= " AND YEAR(`att`.`attendance_date`) = '$selectedYear'";
+    }
+
+    $sql .= " ORDER BY `att`.`attendance_date`, `att`.`action_time`";
 
     $query = mysqli_query($db, $sql);
 
@@ -497,7 +515,6 @@ function LoadingAttendanceByEmpId()
     while ($row = mysqli_fetch_assoc($query)) {
         $date = $row['attendance_date'];
         if (!isset($attendance[$date])) {
-            // Initialize new attendance entry for the date
             $attendance[$date] = [
                 'date' => date('d-m-Y', strtotime($date)),
                 'emp_code' => $row['emp_code'],
@@ -510,7 +527,6 @@ function LoadingAttendanceByEmpId()
             ];
         }
 
-        // Assign punch-in or punch-out based on existing data
         $time = $row['action_time'];
         $desc = $row['emp_desc'];
         if (empty($attendance[$date]['punch_in'])) {
@@ -520,7 +536,6 @@ function LoadingAttendanceByEmpId()
             $attendance[$date]['punch_out'] = date('h:i:s A', strtotime($time));
             $attendance[$date]['desc_out'] = $desc;
 
-            // Calculate work hours
             $datetime1 = new DateTime($attendance[$date]['punch_in']);
             $datetime2 = new DateTime($attendance[$date]['punch_out']);
             $interval = $datetime1->diff($datetime2);
@@ -528,21 +543,19 @@ function LoadingAttendanceByEmpId()
         }
     }
 
-    // Convert associative array to indexed array for DataTables
     foreach ($attendance as $record) {
         $data[] = [
-            $record['date'],        // Date
-            $record['emp_code'],   // Employee Code
-            $record['emp_name'],   // Employee Name
-            $record['punch_in'],   // Punch-in Time
-            $record['punch_out'],  // Punch-out Time
-            $record['work_hours'], // Work Hours
-            $record['desc_in'],    // Description for Punch-in
-            $record['desc_out']    // Description for Punch-out
+            $record['date'],        
+            $record['emp_code'],   
+            $record['emp_name'],   
+            $record['punch_in'],   
+            $record['punch_out'],  
+            $record['work_hours'], 
+            $record['desc_in'],    
+            $record['desc_out']    
         ];
     }
 
-    // Return JSON response
     header('Content-Type: application/json');
     echo json_encode(['data' => $data]);
 }

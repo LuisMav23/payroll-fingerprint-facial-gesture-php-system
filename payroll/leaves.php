@@ -308,6 +308,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				});
 			});
 		});
+	$(document).ready(function () {
+    	$(".action-btn").click(function () {
+        var button = $(this);
+        var leaveId = button.data("leave-id");
+        var action = button.data("action");
+
+        // Disable both buttons to prevent multiple clicks
+        button.closest("td").find(".action-btn").prop("disabled", true);
+
+        $.ajax({
+            url: "process_leave.php",
+            type: "POST",
+            data: { leave_id: leaveId, action: action },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    var statusLabel = '<span class="label label-' + 
+                        (action === "approve" ? "success" : "danger") + '">' + 
+                        (action === "approve" ? "Approved" : "Rejected") + '</span>';
+
+                    // Replace buttons with status label
+                    button.closest("td").html(statusLabel);
+                } else {
+                    // Re-enable buttons if update fails
+                    button.closest("td").find(".action-btn").prop("disabled", false);
+                    alert("Failed to update status.");
+                }
+            },
+            error: function () {
+                button.closest("td").find(".action-btn").prop("disabled", false);
+                alert("Error processing request.");
+            }
+        });
+    });
+});
 	</script>
 
 </body>
