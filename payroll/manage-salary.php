@@ -284,7 +284,7 @@ if ($checkSalarySQL) {
 																						class="form-control text-right" />
 																				</td>
 																			</tr>
-																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan' || $head['payhead_name'] == 'Philhealth Contribution' || $head['payhead_name'] == 'Withholding Tax')){ ?>
+																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan' || $head['payhead_name'] == 'Philhealth Contribution' || $head['payhead_name'] == 'Withholding Tax' || $head['payhead_name'] == 'SSS Premium' || $head['payhead_name'] == 'Maxicare' || $head['payhead_name'] == 'Salary Loan')){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
