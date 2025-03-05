@@ -270,7 +270,7 @@ if ($checkSalarySQL) {
 																	<?php } ?>
 																	<?php foreach ($empHeads as $head) { ?>
 																		<?php if ($head['payhead_type'] == 'deductions') { ?>
-																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Contribution'){ ?>
+																			<?php if(!$cutoffFlag  && $head['payhead_name'] == 'SSS Contribution' || $head['payhead_name'] == 'Salary Loan' ){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
@@ -284,7 +284,7 @@ if ($checkSalarySQL) {
 																						class="form-control text-right" />
 																				</td>
 																			</tr>
-																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan' || $head['payhead_name'] == 'Philhealth Contribution' || $head['payhead_name'] == 'Withholding Tax' || $head['payhead_name'] == 'SSS Premium' || $head['payhead_name'] == 'Maxicare' || $head['payhead_name'] == 'Salary Loan')){ ?>
+																			<?php } else if($cutoffFlag  && ($head['payhead_name'] == 'Pag-Ibig Loan' || $head['payhead_name'] == 'SSS Loan' || $head['payhead_name'] == 'Philhealth Contribution' || $head['payhead_name'] == 'Withholding Tax' || $head['payhead_name'] == 'SSS Premium' || $head['payhead_name'] == 'Maxicare' || $head['payhead_name'] == 'Salary Loan' )){ ?>
 																			<?php $totalDeductions += $head['default_salary']; ?>
 																			<tr>
 																				<td width="70%">
