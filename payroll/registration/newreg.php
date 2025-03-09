@@ -423,11 +423,11 @@ if (isset($_POST['submit'])) {
 
                         <script>
                             const departmentDesignations = {
-                                "Operation Department": ["Collectors", "Drivers", "Pesticide Handler", "Operation Technician"],
-                                "Admin Department": ["Liaison Officer", "Admin Officer", "HR Manager"],
-                                "Billing Department": ["Billing Officer"],
-                                "Warehouse Department": ["Supervisor/Team"],
-                                "Accounting Department": ["General Manager", "Operation Manager", "Finance Supervisor", "Accounting Staff"]
+                                "Operation Department": ["General Manager", "Operation Manager", "Supervisor"],
+                                "Admin Department": [ "HR Manager", "Admin Officer", "Liaison Officer"],
+                                "Billing Department": ["Billing Officer", "Collector Officer"],
+                                "Warehouse Department": ["Driver", "Operation Technician", "Pesticide Handler"],
+                                "Accounting Department": ["Accounting Staff", "Finance Supervisor"]
                             };
 
                             document.getElementById("department").addEventListener("change", function () {
