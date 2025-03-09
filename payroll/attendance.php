@@ -169,7 +169,7 @@ if (!isset($_SESSION['Admin_ID'])) {
 	<script>
 	var baseurl = '<?php echo BASE_URL; ?>';
 	var loginType = '<?php echo $_SESSION["Login_Type"] ?>';
-	var emp_id = '<?php echo $_SESSION['Employee_Code']; ?>';
+	var emp_code = '';
 
 // 	$(document).ready(function () {
 //     console.log(loginType);
@@ -256,7 +256,6 @@ if (!isset($_SESSION['Admin_ID'])) {
 
 	$(document).ready(function () {
     console.log(loginType);
-    console.log(emp_id);
 
     if (loginType === 'admin') {
         // Fetch all employees
@@ -295,14 +294,16 @@ if (!isset($_SESSION['Admin_ID'])) {
     // View Attendance Button Click Event
     $(document).on('click', '.viewAttendance', function () {
         const empCode = $(this).data('emp-code');
-        fetchAttendance('<?php echo $_SESSION['Employee_Code']; ?>');
+		emp_code = empCode;
+		console.log(empCode);
+        fetchAttendance(emp_code);
         $('#attendanceModal').modal('show');
     });
 
     // Apply filters
     $('#applyFilter').click(function () {
-        let empCode = $('.viewAttendance').data('emp-code');
-        fetchAttendance('<?php echo $_SESSION['Employee_Code']; ?>');
+		console.log(emp_code);
+        fetchAttendance(emp_code);
     });
 
     function fetchAttendance(empCode) {
