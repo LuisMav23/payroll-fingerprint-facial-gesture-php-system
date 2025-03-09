@@ -289,7 +289,7 @@ if (!isset($_SESSION['Admin_ID'])) {
         });
     } else {
         // Fetch attendance records for the logged-in employee
-        loadAttendance(emp_id);
+        loadAttendanceEmployeePortal('<?php echo $_SESSION['Employee_Code']; ?>');
     }
 
     // View Attendance Button Click Event
@@ -334,6 +334,33 @@ if (!isset($_SESSION['Admin_ID'])) {
             }
         });
     }
+
+	function loadAttendanceEmployeePortal(empCode){
+		$.ajax({
+            url: baseurl + 'ajax/?case=LoadingAttendanceByEmpCode',
+            type: 'GET',
+            data: { emp_code: empCode},
+            success: function (response) {
+                $('#attendanceTable tbody').empty();
+                if (response.data.length === 0) {
+                    $('#attendanceTable tbody').append('<tr><td colspan="6">No attendance records found.</td></tr>');
+                } else {
+                    response.data.forEach(attendance => {
+                        const row = `<tr>
+                            <td>${attendance[0]}</td>
+                            <td>${attendance[3]}</td>
+                            <td>${attendance[4]}</td>
+                            <td>${attendance[5]}</td>
+                            <td>${attendance[6]}</td>
+                            <td>${attendance[7]}</td>
+                        </tr>`;
+                        $('#attendanceTable tbody').append(row);
+                    });
+                }
+            }
+        });
+	}
+
 });
 	</script>
 
