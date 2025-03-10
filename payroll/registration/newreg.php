@@ -137,6 +137,7 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>dist/css/AdminLTE.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>plugins/datepicker/datepicker3.css">
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
 
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -163,30 +164,28 @@ if (isset($_POST['submit'])) {
             color:rgb(255, 233, 111);
             font-weight:100;
         }
+        
     </style>
 </head>
 
 <body class="hold-transition register-page">
-    <div class="container">
-        <div class="register-box">
-            <div class="register-logo register-title">
-                <a href="<?php echo BASE_URL; ?>" class="register-title">
-                <!-- Added Code - Andrie -->
-                    <img src="../dist/img/alar-logo.png" alt="Alar Logo">
-                    <b class="payroll">Employee Registration </b> <span class="management"> Form</span>
-                </a>
-                <br>
+   
+            
+<!-- Bootstrap Modal Structure -->
+<div class="modal show" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="false" style="display: block;">
+    <div class="modal-dialog" role="document" style="width: 90vw; height: 90vh; max-width: 100%; margin: 5vh auto;">
+        <div class="modal-content" style="height: 90vh; display: flex; flex-direction: column; border-radius: 10px;"> <!-- Added border-radius -->
+
+            <!-- Modal Header (Sticky) with Logo -->
+            <div class="modal-header" style="position: sticky; top: 0; background-color: #111733; color: white; z-index: 10; padding: 20px; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; border: 3px solid white; border-radius: 8px;">
+                <img src="../dist/img/alar-logo.png" alt="Logo" style="height: 150px; margin-right: 20px;"> <!-- Increased logo size -->
+                <h5 class="modal-title payroll" id="registrationModalLabel" style="font-size: 3rem; font-weight: bold;">
+                    Employee Registration <span class="management"> Form</span>
+                </h5>
             </div>
-            <div class="form-group">
-        </div>
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">Fill the below form</h3>
-                <div class="box-tools pull-right">
-                    <span class="text-red">All fields are mandatory</span>
-                </div>
-            </div>
-            <form class="form-horizontal" method="post" enctype="multipart/form-data" novalidate="">
+            <!-- Modal Body (Scrollable) -->
+            <div class="modal-body" style="overflow-y: auto; flex-grow: 1; padding: 20px; -webkit-overflow-scrolling: touch;">
+                <form class="form-horizontal" method="post" enctype="multipart/form-data" novalidate="">
                 <div class="box-body">
                     <div class="form-group">
                         <label for="first_name" class="col-sm-2 control-label">Full Name</label>
@@ -336,58 +335,7 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
                     <hr />
-                    <div class="form-group">
-									<!-- <div class="col-sm-4">
-										<label for="department">Department</label>
-										<input type="text" class="form-control" name="department" id="department"
-											 /> -->
-											 <!-- Added Code - Andrie -->
-                        <!-- <div class="form-group">
-                        <label for="department" class="col-sm-2 control-label">Department</label>
-											<div class="col-sm-10">
-												<select class="form-control" name="department" id="department" required>
-													<option value="">Please make a choice</option>
-													<?php
-													$department = [
-														"Operation Department", "Admin Department", "Billing Department", "Warehouse Department", 
-                                                        "Accounting Department"
-													];
-
-													$selectedDepartment= $_POST['department'] ?? '';
-
-													foreach ($department as $department) {
-														$selected = ($selectedDepartment == $department) ? 'selected' : '';
-														echo "<option value=\"$department\" $selected>$department</option>";
-													}
-													?>
-												</select>
-												<?php echo $errors['department'] ?? ''; ?>
-											</div>
-                                         </div> 
-                        <div class="form-group">
-                        <label for="designation" class="col-sm-2 control-label">Position</label>
-											<div class="col-sm-10">
-												<select class="form-control" name="designation" id="designation" required>
-													<option value="">Please make a choice</option>
-													<?php
-													$designations = [
-														"Collectors", "Drivers", "Pesticide Handler", "Operation Technician", 
-                                                        "Liaison Officer", "Billing Officer", "Supervisor/Team", "General Manager",
-														"Operation Manager", "HR Manager", "Finance Supervisor",
-														"Admin Officer", "Accounting Staff"
-													];
-
-													$selectedDesignation = $_POST['designation'] ?? '';
-
-													foreach ($designations as $designation) {
-														$selected = ($selectedDesignation == $designation) ? 'selected' : '';
-														echo "<option value=\"$designation\" $selected>$designation</option>";
-													}
-													?>
-												</select>
-												<?php echo $errors['designation'] ?? ''; ?>
-											</div>
-                        </div> -->
+                    <!-- Added Code - Andrie -->
                     <div class="form-group">
                         <label for="department" class="col-sm-2 control-label">Department</label>
                             <div class="col-sm-8">
@@ -410,7 +358,6 @@ if (isset($_POST['submit'])) {
                                 <?php echo $errors['department'] ?? ''; ?>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="designation" class="col-sm-2 control-label">Position</label>
                             <div class="col-sm-8">
@@ -420,7 +367,6 @@ if (isset($_POST['submit'])) {
                                 <?php echo $errors['designation'] ?? ''; ?>
                             </div>
                         </div>
-
                         <script>
                             const departmentDesignations = {
                                 "Operation Department": ["General Manager", "Operation Manager", "Supervisor"],
@@ -507,6 +453,11 @@ if (isset($_POST['submit'])) {
                 </div>
                 <br><br>
             </form>
+            </div>
+
+        </div>
+    </div>
+</div>
         </div>
     </div>
 
